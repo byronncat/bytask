@@ -1,0 +1,29 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 255 255 255;
+    --foreground: 247 245 245;
+    --primary: 0 0 0;
+    --on-background: 55 53 47;
+    --on-foreground: 29 27 22;
+    --on-primary: 255 255 255;
+  }
+
+  [data-theme='dark'] {
+    --background: 25 25 25;
+    --foreground: 32 32 32;
+    --primary: 255 255 255;
+    --on-background: 212 212 212;
+    --on-foreground: 225 225 225;
+    --on-primary: 0 0 0;
+  }
+}
+
+body {
+  color: var(--foreground);
+  background: var(--background);
+  font-family: Arial, Helvetica, sans-serif;
+}
