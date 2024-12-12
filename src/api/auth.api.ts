@@ -15,6 +15,7 @@ export async function login({
   identity,
   password,
 }: LoginFormData): Promise<IApi> {
+  console.log(apiUrl.login);
   return await fetch(apiUrl.login, {
     method: 'POST',
     headers: {

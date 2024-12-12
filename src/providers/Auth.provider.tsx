@@ -2,6 +2,7 @@
 
 import { useRouter } from 'next/navigation';
 import { createContext, useContext } from 'react';
+import { ROUTE } from '@/constants/server';
 
 const AuthContext = createContext(
   {} as {
@@ -17,10 +18,10 @@ export default function AuthenticationProvider({
   const router = useRouter();
 
   const login = () => {
-    router.push('/');
+    router.push(ROUTE.DASHBOARD);
   };
   const logout = () => {
-    router.push('/login');
+    router.push(ROUTE.LOGIN);
   };
 
   return (

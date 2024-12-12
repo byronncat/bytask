@@ -10,6 +10,7 @@ export const LOGIN_FORM = {
       validation: {
         required: 'Username or Email is required',
       },
+      defaultValue: 'Byron',
     },
     {
       id: 'password',
@@ -19,6 +20,7 @@ export const LOGIN_FORM = {
       validation: {
         required: 'Password is required',
       },
+      defaultValue: '1234567',
     },
   ],
 } as const satisfies IForm;

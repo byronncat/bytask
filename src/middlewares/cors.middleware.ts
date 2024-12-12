@@ -30,9 +30,10 @@ export function corsMiddleware(request: NextRequest) {
     response.headers.set('Access-Control-Allow-Origin', origin);
   }
 
-  Object.entries(corsOptions).forEach(([key, value]) => {
-    response.headers.set(key, value);
-  });
+  // Preflighted requests
+  // Object.entries(corsOptions).forEach(([key, value]) => {
+  //   response.headers.set(key, value);
+  // });
 
   return response;
 }

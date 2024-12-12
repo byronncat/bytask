@@ -28,13 +28,11 @@ function LogoAndText() {
       <Image
         src="/logo.svg"
         alt="logo"
-        width={40}
-        height={40}
+        width={32}
+        height={32}
         className="rounded-md"
       />
-      <span className={clsx('ml-2', 'font-bold text-2xl', 'text-primary')}>
-        Bynote
-      </span>
+      <span className={clsx('ml-2', 'font-bold text-lg')}>Bynote</span>
     </>
   );
 }

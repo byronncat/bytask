@@ -11,10 +11,9 @@ export default {
       colors: {
         background: 'rgb(var(--background))',
         foreground: 'rgb(var(--foreground))',
-        primary: 'rgb(var(--primary))',
         'on-background': 'rgb(var(--on-background))',
         'on-foreground': 'rgb(var(--on-foreground))',
-        'on-primary': 'rgb(var(--on-primary))',
+        border: 'var(--border)',
       },
       fontFamily: {
         sans: ['var(--font-geist-sans)'],

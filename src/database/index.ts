@@ -1,2 +1,2 @@
+import './connection';
 export * from './model';
-export { redis } from './connection';

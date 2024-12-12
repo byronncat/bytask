@@ -35,7 +35,7 @@ export default function ThemeSelection({
         <FontAwesomeIcon
           icon={faSunSolid}
           className={clsx(
-            'size-5 mr-2',
+            'size-4 mr-2',
             'inline-block',
             'text-on-foreground/[.6]',
           )}
@@ -50,7 +50,7 @@ export default function ThemeSelection({
         <FontAwesomeIcon
           icon={faMoonSolid}
           className={clsx(
-            'size-5 mr-2',
+            'size-4 mr-2',
             'inline-block',
             'text-on-foreground/[.6]',
           )}
@@ -65,7 +65,7 @@ export default function ThemeSelection({
         <FontAwesomeIcon
           icon={faLaptop}
           className={clsx(
-            'size-5 mr-2',
+            'size-4 mr-2',
             'inline-block',
             'text-on-foreground/[.6]',
           )}
@@ -83,7 +83,7 @@ export default function ThemeSelection({
     <div className={className}>
       <button
         className={clsx(
-          'size-12',
+          'size-9',
           'relative z-10',
           'rounded-full',
           'transistion-colors duration-300',
@@ -96,12 +96,12 @@ export default function ThemeSelection({
           (resolvedTheme === 'dark' ? (
             <FontAwesomeIcon
               icon={theme === 'system' ? faMoonRegular : faMoonSolid}
-              className="size-8 text-on-foreground/[.8]"
+              className="size-6 text-on-foreground/[.8]"
             />
           ) : (
             <FontAwesomeIcon
               icon={theme === 'system' ? faSunRegular : faSunSolid}
-              className="size-8 text-on-foreground/[.8]"
+              className="size-6 text-on-foreground/[.8]"
             />
           ))}
       </button>

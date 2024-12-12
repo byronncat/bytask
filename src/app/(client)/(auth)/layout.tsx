@@ -10,7 +10,7 @@ export default function Layout({
     <div className={clsx('relative', 'w-screen h-screen')}>
       <div
         className={clsx(
-          'pt-5 px-4',
+          'py-2 px-4',
           'absolute top-0 left-0',
           'w-full flex justify-between items-center',
         )}
@@ -20,18 +20,19 @@ export default function Layout({
       </div>
       <main className={clsx('flex items-center justify-center', 'size-full')}>
         <div className="w-80">
-          <Link className="block mb-6" href="/">
+          <Link className="block mb-3" href="/">
             <span className="sr-only">Home</span>
-            <Image src="/logo.svg" alt="logo" width={80} height={80} />
+            <Image src="/logo.svg" alt="logo" width={60} height={60} />
           </Link>
 
-          <h1 className={clsx('font-bold text-3xl', 'mb-2')}>
+          <h1 className={clsx('font-bold text-2xl', 'mb-2')}>
             Think it. Make it.
           </h1>
 
-          <p className={clsx('text-on-background/[.6] text-lg', 'w-full')}>
+          <p className={clsx('text-on-background/[.7]', 'w-full mb-6')}>
             Turn ideas into action with effortless task management.
           </p>
+
           {children}
         </div>
       </main>

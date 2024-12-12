@@ -6,7 +6,6 @@ declare module 'api' {
   }
 
   export type SessionPayload = {
-    id: string;
     userId: string;
     expiresAt: Date;
   };

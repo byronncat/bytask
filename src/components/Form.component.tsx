@@ -12,6 +12,7 @@ import type {
   Path,
   UseFormRegister,
   RegisterOptions,
+  DefaultValues,
 } from 'react-hook-form';
 import type { IForm, IField } from 'form';
 
@@ -28,11 +29,18 @@ export default function Form<T extends FieldValues>({
   className,
   submitText = 'submit',
 }: Readonly<FormProps<T>>) {
+  const defaultValues = formData.fields.reduce((acc, field) => {
+    acc[field.id] = field.defaultValue ?? '';
+    return acc;
+  }, {} as DefaultValues<T>);
+
   const {
     register,
     handleSubmit,
     formState: { errors },
-  } = useForm<T>();
+  } = useForm<T>({
+    defaultValues,
+  });
   const [isFetching, setIsFetching] = useState(false);
 
   const submitHandler = handleSubmit(async (data) => {
@@ -45,7 +53,7 @@ export default function Form<T extends FieldValues>({
   });
 
   return (
-    <form onSubmit={submitHandler} className={clsx('mt-8', className)}>
+    <form onSubmit={submitHandler} className={clsx(className)}>
       <div className="space-y-3">
         {formData.fields.map((field) => (
           <Field
@@ -64,12 +72,11 @@ export default function Form<T extends FieldValues>({
       <button
         type="submit"
         className={clsx(
-          'w-full h-10 block !mt-10',
+          'w-full h-10 block !mt-8',
           'font-medium capitalize',
           'border border-on-background',
           'rounded-md focus:outline-none',
           'bg-background text-on-background',
-          'transition-colors duration-300',
           'disabled:opacity-60',
           !isFetching && 'hover:bg-on-background hover:text-background',
         )}
@@ -107,7 +114,7 @@ function Field<T extends FieldValues>({
     <div>
       <label
         htmlFor={id}
-        className={clsx('block', 'text-sm font-medium text-on-background/[.7]')}
+        className={clsx('block', 'text-sm font-medium text-on-background/[.9]')}
       >
         {label}
       </label>

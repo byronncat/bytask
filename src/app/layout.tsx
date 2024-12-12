@@ -41,6 +41,7 @@ export default function RootLayout({
             <ToastProvider>{children}</ToastProvider>
           </ThemeProvider>
         </AuthProvider>
+        <script src="path/to/chartjs/dist/chart.umd.js" />
       </body>
     </html>
   );

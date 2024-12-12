@@ -21,7 +21,6 @@ export default function NavigationText({
         href={path}
         className={clsx(
           'font-semibold capitalize',
-          'text-primary',
           'hover:opacity-60 transition-opacity duration-300',
         )}
       >
