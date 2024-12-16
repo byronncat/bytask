@@ -6,17 +6,34 @@
   :root {
     --background: 255 255 255;
     --foreground: 247 245 245;
-    --border: rgba(0, 0, 0, 0.1);
+    --surface-1: 241, 242, 244;
+    --surface-2: 255, 255, 255;
     --on-background: 23 43 77;
     --on-foreground: 23 43 77;
+    --on-surface-1: 23 43 77;
+    --on-surface-2: 23 43 77;
+    --border: rgba(0, 0, 0, 0.1);
+    --contrast: 8 8 9;
   }
 
   [data-theme='dark'] {
     --background: 29 33 37;
     --foreground: 37 44 50;
-    --border: rgba(255, 255, 255, 0.2);
+    --surface-1: 26 26 26;
+    --surface-2: 34 39 43;
     --on-background: 182 194 207;
     --on-foreground: 182 194 207;
+    --on-surface-1: 182 194 207;
+    --on-surface-2: 182 194 207;
+    --border: rgba(255, 255, 255, 0.2);
+    --contrast: 255 255 255;
+  }
+
+  .fc .fc-event-resizer {
+    display: block !important;
+    background-color: black !important; /* Optional: Make it visible */
+    width: 8px !important;
+    height: 8px !important;
   }
 }
 

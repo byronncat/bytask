@@ -15,11 +15,19 @@ const data = [
 
 export default function Page() {
   const canvasElement = useRef<HTMLCanvasElement>(null);
+  const chartInstance = useRef<Chart | null>(null);
 
   useEffect(() => {
     const ctx = canvasElement.current?.getContext('2d');
+
     if (ctx) {
-      new Chart(ctx, {
+      // Destroy the existing chart instance if it exists
+      if (chartInstance.current) {
+        chartInstance.current.destroy();
+      }
+
+      // Create a new chart instance
+      chartInstance.current = new Chart(ctx, {
         type: 'bar',
         data: {
           labels: data.map((row) => row.year),
@@ -33,6 +41,13 @@ export default function Page() {
         },
       });
     }
+
+    // Cleanup function to destroy the chart when the component unmounts
+    return () => {
+      if (chartInstance.current) {
+        chartInstance.current.destroy();
+      }
+    };
   }, []);
 
   return (

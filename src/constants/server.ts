@@ -13,4 +13,8 @@ export const ROUTE = {
   LOGIN: '/login',
   SIGNUP: '/signup',
   DASHBOARD: '/dashboard',
+  BOARD_VIEW: '/board',
+  CALENDAR_VIEW: '/calendar',
+  TALBE_VIEW: '/table',
+  STATISTICS: '/statistics',
 };

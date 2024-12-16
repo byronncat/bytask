@@ -79,9 +79,12 @@ export default function Form<T extends FieldValues>({
           'bg-background text-on-background',
           'disabled:opacity-60',
           !isFetching && 'hover:bg-on-background hover:text-background',
+          'flex justify-center items-center',
+          'pr-6',
         )}
         disabled={isFetching}
       >
+        <Spinner className={clsx(isFetching ? 'mr-2' : 'hidden')} />
         {submitText}
       </button>
     </form>
@@ -158,5 +161,19 @@ function Field<T extends FieldValues>({
         )}
       </div>
     </div>
+  );
+}
+
+function Spinner({ className }: Readonly<{ className?: string }>) {
+  return (
+    <span
+      className={clsx(
+        className,
+        'size-4',
+        'border-2 border-on-background',
+        'rounded-full animate-spin',
+        'border-solid border-t-transparent',
+      )}
+    />
   );
 }

@@ -32,6 +32,7 @@ export async function authorizationMiddleware(req: NextRequest) {
 
     return NextResponse.next();
   } catch (error) {
+    console.error('[Authorization]', '- Failed to authorize', error);
     return NextResponse.redirect(new URL('/login', req.nextUrl));
   }
 }

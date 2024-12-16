@@ -83,7 +83,7 @@ export default function ThemeSelection({
     <div className={className}>
       <button
         className={clsx(
-          'size-9',
+          'size-8',
           'relative z-10',
           'rounded-full',
           'transistion-colors duration-300',

@@ -1,6 +1,6 @@
 import mongoose from 'mongoose';
 import { v4 as uuidv4 } from 'uuid';
-import type { Document, ObjectId } from 'mongoose';
+import type { Document } from 'mongoose';
 import type { IUser } from 'schema';
 
 interface UserDocument extends IUser, Document {

@@ -12,10 +12,8 @@ export default function LoginPage() {
   const { login } = useAuth();
 
   async function handleLogin(data: LoginFormData) {
-    toast.loading('Logging in...');
     const { success, message } = await authAction.login(data);
     if (success) {
-      toast.success(message);
       login();
     } else toast.error(message);
   }

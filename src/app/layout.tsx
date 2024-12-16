@@ -1,7 +1,6 @@
 import { ThemeProvider } from 'next-themes';
 import { AuthProvider } from '@/providers';
 import { ToastProvider } from '@/libraries/toast';
-
 import { config } from '@fortawesome/fontawesome-svg-core';
 import '@fortawesome/fontawesome-svg-core/styles.css';
 config.autoAddCss = false;
@@ -41,7 +40,6 @@ export default function RootLayout({
             <ToastProvider>{children}</ToastProvider>
           </ThemeProvider>
         </AuthProvider>
-        <script src="path/to/chartjs/dist/chart.umd.js" />
       </body>
     </html>
   );

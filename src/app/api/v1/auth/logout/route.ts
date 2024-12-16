@@ -1,7 +1,7 @@
 import session from '@/libraries/session';
 import { STATUS_CODE } from '@/constants/server';
 
-export async function DELETE(request: Request) {
+export async function DELETE() {
   try {
     return await session
       .discard()

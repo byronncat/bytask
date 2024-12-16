@@ -22,6 +22,7 @@ async function decrypt(session: string | undefined = '') {
     });
     return payload;
   } catch (error) {
+    console.error('[Session]', '- Failed to decrypt session', error);
     return null;
   }
 }

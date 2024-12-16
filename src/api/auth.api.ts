@@ -9,6 +9,7 @@ if (!serverHost) throw Error('Server Host is not defined');
 const apiUrl = {
   login: `${serverHost}/v1/auth/login`,
   signup: `${serverHost}/v1/auth/signup`,
+  logout: `${serverHost}/v1/auth/logout`,
 };
 
 export async function login({
@@ -47,6 +48,29 @@ export async function signup(data: SignupFormData): Promise<IApi> {
       'Content-Type': 'application/json',
     },
     body: JSON.stringify(data),
+  })
+    .then(async (res) => {
+      const message = await res.json();
+      if (!res.ok) throw Error(message);
+      return {
+        success: true,
+        message,
+      };
+    })
+    .catch((error) => {
+      return {
+        success: false,
+        message: error,
+      };
+    });
+}
+
+export async function logout(): Promise<IApi> {
+  return await fetch(apiUrl.logout, {
+    method: 'DELETE',
+    headers: {
+      'Content-Type': 'application/json',
+    },
   })
     .then(async (res) => {
       const message = await res.json();

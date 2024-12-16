@@ -1,223 +1,87 @@
-'use client';
-
-import { useState } from 'react';
-
 export default function DashboardPage() {
-  const [lists, setLists] = useState([
-    { id: 'list-1', title: 'This is a list', cards: ['card-1', 'card-2'] },
-    { id: 'list-2', title: 'Another list', cards: ['card-3'] },
-    { id: 'list-3', title: 'Empty list', cards: [] },
-  ]);
-
-  const [draggingCard, setDraggingCard] = useState<string | null>(null);
-  const [draggingFromList, setDraggingFromList] = useState<string | null>(null);
-  const [hoveredListId, setHoveredListId] = useState<string | null>(null);
-
-  const handleDragStart = (cardId: string, sourceListId: string) => {
-    setDraggingCard(cardId);
-    setDraggingFromList(sourceListId);
-  };
-
-  const handleDrop = (destinationListId: string) => {
-    if (!draggingCard) return;
-
-    // If dropped into the same list
-    if (draggingFromList === destinationListId) {
-      setDraggingCard(null);
-      setDraggingFromList(null);
-      setHoveredListId(null);
-      return;
-    }
-
-    const newLists = lists.map((list) => {
-      if (list.id === draggingFromList) {
-        return {
-          ...list,
-          cards: list.cards.filter((card) => card !== draggingCard),
-        };
-      }
-      if (list.id === destinationListId) {
-        return {
-          ...list,
-          cards: [...list.cards, draggingCard],
-        };
-      }
-      return list;
-    });
-
-    setLists(newLists);
-    setDraggingCard(null);
-    setDraggingFromList(null);
-    setHoveredListId(null);
-  };
-
-  const handleDragEnter = (listId: string) => {
-    setHoveredListId(listId);
-  };
-
-  const handleDragLeave = (listId: string) => {
-    if (hoveredListId === listId) setHoveredListId(null);
-  };
-
-  const addListHandler = () => {
-    const newList = { id: `list-${Date.now()}`, title: 'New list', cards: [] };
-    setLists([...lists, newList]);
-  };
-
   return (
-    <div className="p-6 flex">
-      {lists.map((list) => (
-        <div
-          key={list.id}
-          className={`bg-gray-200 p-4 m-2 rounded-lg shadow-md min-w-64 ${
-            hoveredListId === list.id ? 'bg-green-200' : ''
-          }`}
-          onDragOver={(e) => e.preventDefault()}
-          onDrop={() => handleDrop(list.id)}
-          onDragEnter={() => handleDragEnter(list.id)}
-          onDragLeave={() => handleDragLeave(list.id)}
-        >
-          <h2 className="text-lg font-semibold mb-2">{list.title}</h2>
-          <div className="space-y-2">
-            {list.cards.map((card) => (
-              <div
-                key={card}
-                draggable
-                onDragStart={() => handleDragStart(card, list.id)}
-                className="bg-white p-2 rounded shadow cursor-pointer"
-              >
-                {card}
-              </div>
-            ))}
+    <div className="bg-gray-900 text-white min-h-screen">
+      {/* Header */}
+      <header className="flex justify-between items-center px-8 py-4 border-b border-gray-700">
+        <div className="flex items-center space-x-4">
+          <div className="bg-gray-700 rounded-full p-2">
+            {/* Key Icon */}
+            <span className="text-2xl">🔑</span>
+          </div>
+          <h1 className="text-2xl font-bold">Coding</h1>
+          <span className="text-sm text-gray-400">Private</span>
+        </div>
+        <button className="bg-blue-600 hover:bg-blue-500 px-4 py-2 rounded-md">
+          Invite Workspace Members
+        </button>
+      </header>
+
+      {/* Boards Section */}
+      <section className="px-8 py-6">
+        {/* Filters */}
+        <div className="flex justify-between items-center mb-4">
+          <div className="flex space-x-4">
+            <select className="bg-gray-800 p-2 rounded-md focus:outline-none">
+              <option>Most recently active</option>
+            </select>
+            <select className="bg-gray-800 p-2 rounded-md focus:outline-none">
+              <option>Choose a collection</option>
+            </select>
+          </div>
+          <input
+            type="text"
+            placeholder="Search boards"
+            className="bg-gray-800 p-2 rounded-md focus:outline-none"
+          />
+        </div>
+
+        {/* Boards Grid */}
+        <div className="grid grid-cols-4 gap-4">
+          {/* Create Board */}
+          <div className="flex items-center justify-center bg-gray-800 rounded-lg h-32 text-gray-400">
+            Create new board
+          </div>
+
+          {/* Individual Boards */}
+          <div
+            className="relative bg-cover bg-center rounded-lg h-32 flex items-end"
+            style={{
+              backgroundImage:
+                "url('https://source.unsplash.com/featured/?nature')",
+            }}
+          >
+            <div className="w-full bg-black bg-opacity-50 p-2">Temp</div>
+          </div>
+
+          <div className="relative bg-blue-700 rounded-lg h-32 flex items-end">
+            <div className="w-full bg-black bg-opacity-50 p-2">
+              Task Management
+            </div>
+          </div>
+
+          <div
+            className="relative bg-cover bg-center rounded-lg h-32 flex items-end"
+            style={{
+              backgroundImage:
+                "url('https://source.unsplash.com/featured/?tech')",
+            }}
+          >
+            <div className="w-full bg-black bg-opacity-50 p-2">
+              Social Media App
+            </div>
+          </div>
+
+          <div
+            className="relative bg-cover bg-center rounded-lg h-32 flex items-end"
+            style={{
+              backgroundImage:
+                "url('https://source.unsplash.com/featured/?music')",
+            }}
+          >
+            <div className="w-full bg-black bg-opacity-50 p-2">Music App</div>
           </div>
         </div>
-      ))}
-
-      {/* Button to add a new list */}
-      <div
-        onClick={addListHandler}
-        className="cursor-pointer bg-gray-600 text-white p-2 rounded-lg shadow mt-4 hover:bg-gray-700"
-      >
-        Add another list
-      </div>
+      </section>
     </div>
   );
 }
-
-// export default function DashboardPage() {
-//   const [lists, setLists] = useState([
-//     { id: 'list-1', title: 'This is a list', cards: ['card-1', 'card-2'] },
-//     { id: 'list-2', title: 'Another list', cards: ['card-3'] },
-//     { id: 'list-3', title: 'Empty list', cards: [] },
-//   ]);
-
-//   const [draggingCard, setDraggingCard] = useState<string | null>(null);
-//   const [draggingFromList, setDraggingFromList] = useState<string | null>(null);
-//   const [hoveredListId, setHoveredListId] = useState<string | null>(null);
-//   const [hoverIndex, setHoverIndex] = useState<number | null>(null); // Index for placeholder position
-
-//   const handleDragStart = (cardId: string, sourceListId: string) => {
-//     setDraggingCard(cardId);
-//     setDraggingFromList(sourceListId);
-//   };
-
-//   const handleDragEnter = (listId: string, index: number) => {
-//     setHoveredListId(listId);
-//     setHoverIndex(index);
-//   };
-
-//   const handleDragLeave = () => {
-//     setHoveredListId(null);
-//     setHoverIndex(null);
-//   };
-
-//   const handleDrop = (destinationListId: string) => {
-//     if (!draggingCard) return;
-
-//     const newLists = lists.map((list) => {
-//       if (list.id === draggingFromList) {
-//         // Remove the card from the original list
-//         return {
-//           ...list,
-//           cards: list.cards.filter((card) => card !== draggingCard),
-//         };
-//       }
-//       if (list.id === destinationListId && hoverIndex !== null) {
-//         // Insert the card at the hovered index position
-//         return {
-//           ...list,
-//           cards: [
-//             ...list.cards.slice(0, hoverIndex),
-//             draggingCard,
-//             ...list.cards.slice(hoverIndex),
-//           ],
-//         };
-//       }
-//       return list;
-//     });
-
-//     setLists(newLists);
-//     setDraggingCard(null);
-//     setDraggingFromList(null);
-//     setHoveredListId(null);
-//     setHoverIndex(null);
-//   };
-
-//   const addListHandler = () => {
-//     const newList = { id: `list-${Date.now()}`, title: 'New list', cards: [] };
-//     setLists([...lists, newList]);
-//   };
-
-//   return (
-//     <div className="bg-blue-400 min-h-screen p-6 flex">
-//       {lists.map((list) => (
-//         <div
-//           key={list.id}
-//           className={`bg-gray-200 p-4 m-2 rounded-lg shadow-md w-64 ${
-//             hoveredListId === list.id ? 'bg-green-200' : ''
-//           }`}
-//           onDragOver={(e) => e.preventDefault()}
-//           onDrop={() => handleDrop(list.id)}
-//         >
-//           <h2 className="text-lg font-semibold mb-2">{list.title}</h2>
-//           <div className="space-y-2">
-//             {list.cards.map((card, index) => (
-//               <div
-//                 key={card}
-//                 draggable
-//                 onDragStart={() => handleDragStart(card, list.id)}
-//                 onDragEnter={() => handleDragEnter(list.id, index)}
-//                 onDragLeave={() => handleDragLeave()}
-//                 className={`bg-white p-2 rounded shadow cursor-pointer ${
-//                   hoveredListId === list.id && hoverIndex === index
-//                     ? 'opacity-50'
-//                     : ''
-//                 }`}
-//               >
-//                 {card}
-//               </div>
-//             ))}
-
-//             {/* Render the pseudo-card if hovering */}
-//             {hoveredListId === list.id && hoverIndex !== null && (
-//               <div
-//                 className="bg-blue-300 p-2 rounded shadow opacity-70"
-//                 style={{ marginTop: hoverIndex * 36 }} // Adjusts the pseudo-card position visually
-//               >
-//                 Move here
-//               </div>
-//             )}
-//           </div>
-//         </div>
-//       ))}
-
-//       {/* Button to add a new list */}
-//       <div
-//         onClick={addListHandler}
-//         className="cursor-pointer bg-gray-600 text-white p-2 rounded-lg shadow mt-4 hover:bg-gray-700"
-//       >
-//         Add another list
-//       </div>
-//     </div>
-//   );
-// }

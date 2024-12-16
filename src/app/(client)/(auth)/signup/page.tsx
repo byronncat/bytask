@@ -12,10 +12,8 @@ export default function SignupPage() {
   const { login } = useAuth();
 
   async function handleSignup(data: SignupFormData) {
-    toast.loading('Signing up...');
     const { success, message } = await authAction.signup(data);
     if (success) {
-      toast.success(message);
       login();
     } else toast.error(message);
   }

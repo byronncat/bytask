@@ -1,7 +1,8 @@
 'use client';
 
 import { useRouter } from 'next/navigation';
-import { createContext, useContext } from 'react';
+import { createContext, useContext, useCallback } from 'react';
+import { authAction } from '@/api';
 import { ROUTE } from '@/constants/server';
 
 const AuthContext = createContext(
@@ -20,9 +21,12 @@ export default function AuthenticationProvider({
   const login = () => {
     router.push(ROUTE.DASHBOARD);
   };
-  const logout = () => {
+
+  const logout = useCallback(async () => {
+    const { success } = await authAction.logout();
+    if (!success) return;
     router.push(ROUTE.LOGIN);
-  };
+  }, [router]);
 
   return (
     <AuthContext.Provider value={{ login, logout }}>
