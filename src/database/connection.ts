@@ -1,13 +1,12 @@
 import mongoose from 'mongoose';
-import 'colors';
 
 await (async function connectToMongoDB() {
   await mongoose
     .connect(process.env.MONGODB_HOST || '')
     .then(() => {
-      console.log('[Connection]'.green, '- MongoDB connected');
+      console.log('[Connection]', '- MongoDB connected');
     })
     .catch(() => {
-      console.error('[Connection]'.red, '- MongoDB connection failed');
+      console.error('[Connection]', '- MongoDB connection failed');
     });
 })();
