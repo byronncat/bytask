@@ -10,7 +10,7 @@ import {
 } from '@fortawesome/free-solid-svg-icons';
 import { faStar } from '@fortawesome/free-regular-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import type { MissionMetadata, TaskList, Task } from 'schema';
+import type { MissionMetadata, TaskList } from 'schema';
 import { temp_missions } from '@/__mocks__';
 
 export default function BoardViewPage() {
