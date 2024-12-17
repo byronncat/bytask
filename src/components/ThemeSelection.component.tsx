@@ -115,8 +115,8 @@ export default function ThemeSelection({
 
           <div
             className={clsx(
-              'w-40 mr-6',
-              'absolute top-20 right-0 z-10',
+              'w-40 mr-5',
+              'absolute top-14 right-0 z-10',
               'shadow-xl overflow-hidden',
               'bg-foreground rounded-md',
               'font-semibold text-on-foreground/[.8]',

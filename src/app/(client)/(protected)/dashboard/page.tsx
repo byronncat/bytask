@@ -1,87 +1,194 @@
+'use client';
+
+import { useEffect, useRef, useState } from 'react';
+import Image from 'next/image';
+import clsx from 'clsx';
+import { Divider } from '@/components';
+import icon from '@/assets/workspace-icon.webp';
+
+type Selection = Record<
+  string,
+  {
+    show: boolean;
+    options: Option[];
+  }
+>;
+
+type Option = {
+  id: number;
+  name: string;
+  selected?: boolean;
+};
+
 export default function DashboardPage() {
+  const [selections, setSelectedOptions] = useState<Selection>({
+    'Sort by': {
+      show: false,
+      options: [
+        { id: 1, name: 'Most recently active', selected: true },
+        { id: 2, name: 'Least recently active' },
+        { id: 3, name: 'Alphabetically A-Z' },
+        { id: 4, name: 'Alphabetically Z-A' },
+      ],
+    },
+    'Filter by': {
+      show: false,
+      options: [
+        { id: 1, name: 'All', selected: true },
+        { id: 2, name: 'Active' },
+        { id: 3, name: 'Archived' },
+        { id: 4, name: 'Completed' },
+      ],
+    },
+  });
+
+  const dropdownRefs = useRef(new Map<string, HTMLDivElement>());
+
+  const selectHandler = (selectionName: string, optionId: number) => {
+    setSelectedOptions({
+      ...selections,
+      [selectionName]: {
+        ...selections[selectionName],
+        show: false,
+        options: selections[selectionName].options.map((option) => ({
+          ...option,
+          selected: option.id === optionId,
+        })),
+      },
+    });
+  };
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      const allClosed = Object.values(selections).every(
+        (selection) => !selection.show,
+      );
+      if (allClosed) return;
+
+      let clickedInside = false;
+      dropdownRefs.current.forEach((ref, key) => {
+        if (ref && ref.contains(event.target as Node)) {
+          clickedInside = true;
+        } else {
+          setSelectedOptions((prevSelections) => ({
+            ...prevSelections,
+            [key]: {
+              ...prevSelections[key],
+              show: false,
+            },
+          }));
+        }
+      });
+
+      if (!clickedInside) {
+        setSelectedOptions((prevSelections) => {
+          const newSelections = { ...prevSelections };
+          Object.keys(newSelections).forEach((key) => {
+            newSelections[key].show = false;
+          });
+          return newSelections;
+        });
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [selections]);
+
   return (
-    <div className="bg-gray-900 text-white min-h-screen">
-      {/* Header */}
-      <header className="flex justify-between items-center px-8 py-4 border-b border-gray-700">
-        <div className="flex items-center space-x-4">
-          <div className="bg-gray-700 rounded-full p-2">
-            {/* Key Icon */}
-            <span className="text-2xl">🔑</span>
-          </div>
-          <h1 className="text-2xl font-bold">Coding</h1>
-          <span className="text-sm text-gray-400">Private</span>
+    <div className="size-full max-w-7xl mx-auto">
+      <header className={clsx('flex items-center', 'p-8')}>
+        <div className={clsx('size-15', 'rounded-md overflow-hidden')}>
+          <Image width={60} height={60} src={icon} alt="Workspace Icon" />
         </div>
-        <button className="bg-blue-600 hover:bg-blue-500 px-4 py-2 rounded-md">
-          Invite Workspace Members
-        </button>
+        <h1 className={clsx('text-lg font-semibold', 'ml-4')}>Dashboard</h1>
       </header>
 
-      {/* Boards Section */}
-      <section className="px-8 py-6">
-        {/* Filters */}
-        <div className="flex justify-between items-center mb-4">
-          <div className="flex space-x-4">
-            <select className="bg-gray-800 p-2 rounded-md focus:outline-none">
-              <option>Most recently active</option>
-            </select>
-            <select className="bg-gray-800 p-2 rounded-md focus:outline-none">
-              <option>Choose a collection</option>
-            </select>
-          </div>
-          <input
-            type="text"
-            placeholder="Search boards"
-            className="bg-gray-800 p-2 rounded-md focus:outline-none"
-          />
-        </div>
+      <Divider className="mx-8" />
 
-        {/* Boards Grid */}
-        <div className="grid grid-cols-4 gap-4">
-          {/* Create Board */}
-          <div className="flex items-center justify-center bg-gray-800 rounded-lg h-32 text-gray-400">
-            Create new board
-          </div>
-
-          {/* Individual Boards */}
+      <div className="p-8">
+        <section>
+          <h2 className="font-semibold tracking-wide">Missions</h2>
           <div
-            className="relative bg-cover bg-center rounded-lg h-32 flex items-end"
-            style={{
-              backgroundImage:
-                "url('https://source.unsplash.com/featured/?nature')",
-            }}
+            className={clsx('pt-8 pb-2', 'flex justify-between items-center')}
           >
-            <div className="w-full bg-black bg-opacity-50 p-2">Temp</div>
-          </div>
+            <div className="flex gap-x-1">
+              {Object.entries(selections).map(([selectionName, setting]) => (
+                <div
+                  key={selectionName}
+                  className="flex flex-col gap-y-1"
+                  ref={(el) => {
+                    if (el) {
+                      dropdownRefs.current.set(selectionName, el);
+                    }
+                  }}
+                >
+                  <label className="text-xs font-semibold tracking-wide">
+                    {selectionName}
+                  </label>
+                  <div className="relative">
+                    <div
+                      className={clsx(
+                        'w-48 h-10 px-3 flex items-center justify-between',
+                        'border-[1px] border-border',
+                        'rounded text-sm bg-background cursor-pointer',
+                      )}
+                      onClick={() =>
+                        setSelectedOptions({
+                          ...selections,
+                          [selectionName]: {
+                            ...setting,
+                            show: !setting.show,
+                          },
+                        })
+                      }
+                    >
+                      {setting.options.find((option) => option.selected)?.name}
+                      <span className="text-xs">▼</span>
+                    </div>
 
-          <div className="relative bg-blue-700 rounded-lg h-32 flex items-end">
-            <div className="w-full bg-black bg-opacity-50 p-2">
-              Task Management
+                    <div
+                      className={clsx(
+                        'absolute top-full mt-1 w-48 overflow-auto z-10 py-2',
+                        'bg-background border border-border rounded shadow',
+                        setting.show ? 'block' : 'hidden',
+                      )}
+                    >
+                      {setting.options.map((option) => (
+                        <div
+                          key={option.id}
+                          className={clsx(
+                            'px-3 py-2 text-sm cursor-pointer',
+                            option.selected
+                              ? 'bg-on-background/[.12] border-l-2 border-contrast/[.7]'
+                              : 'hover:bg-on-background/[.07]',
+                          )}
+                          onClick={() =>
+                            selectHandler(selectionName, option.id)
+                          }
+                        >
+                          {option.name}
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              ))}
             </div>
           </div>
+        </section>
 
-          <div
-            className="relative bg-cover bg-center rounded-lg h-32 flex items-end"
-            style={{
-              backgroundImage:
-                "url('https://source.unsplash.com/featured/?tech')",
-            }}
-          >
-            <div className="w-full bg-black bg-opacity-50 p-2">
-              Social Media App
-            </div>
-          </div>
+        <section className="grid md:grid-cols-3 lg:grid-cols-4 pt-6 gap-4">
+          <div className="h-24 bg-white rounded-lg"></div>
+          <div className="h-24 bg-white rounded-lg"></div>
 
-          <div
-            className="relative bg-cover bg-center rounded-lg h-32 flex items-end"
-            style={{
-              backgroundImage:
-                "url('https://source.unsplash.com/featured/?music')",
-            }}
-          >
-            <div className="w-full bg-black bg-opacity-50 p-2">Music App</div>
-          </div>
-        </div>
-      </section>
+          <div className="h-24 bg-white rounded-lg"></div>
+
+          <div className="h-24 bg-white rounded-lg"></div>
+        </section>
+      </div>
     </div>
   );
 }

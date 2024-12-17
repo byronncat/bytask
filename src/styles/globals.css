@@ -28,12 +28,15 @@
     --border: rgba(255, 255, 255, 0.2);
     --contrast: 255 255 255;
   }
+}
 
-  .fc .fc-event-resizer {
-    display: block !important;
-    background-color: black !important; /* Optional: Make it visible */
-    width: 8px !important;
-    height: 8px !important;
+@layer utilities {
+  .theme-invert {
+    filter: invert(0);
+  }
+
+  [data-theme='dark'] .theme-invert {
+    filter: invert(1);
   }
 }
 

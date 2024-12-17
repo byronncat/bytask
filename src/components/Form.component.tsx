@@ -78,9 +78,8 @@ export default function Form<T extends FieldValues>({
           'rounded-md focus:outline-none',
           'bg-background text-on-background',
           'disabled:opacity-60',
-          !isFetching && 'hover:bg-on-background hover:text-background',
+          !isFetching ? 'hover:bg-on-background hover:text-background' : 'pr-6',
           'flex justify-center items-center',
-          'pr-6',
         )}
         disabled={isFetching}
       >
