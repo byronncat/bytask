@@ -1,15 +1,16 @@
 import Image from 'next/image';
 import Link from 'next/link';
 import clsx from 'clsx';
+import { ROUTE } from '@/constants/server';
 
 interface BrandProps {
   hyperlink?: boolean;
 }
 
-export default function Brand({ hyperlink = false }: Readonly<BrandProps>) {
+export default function Brand({ hyperlink = true }: Readonly<BrandProps>) {
   if (hyperlink) {
     return (
-      <Link href="/" className={clsx('flex items-center', 'w-fit')}>
+      <Link href={ROUTE.LANDING} className={clsx('flex items-center', 'w-fit')}>
         <LogoAndText />
       </Link>
     );

@@ -9,7 +9,7 @@ export const STATUS_CODE = {
 };
 
 export const ROUTE = {
-  ROOT: '/',
+  LANDING: '/',
   LOGIN: '/login',
   SIGNUP: '/signup',
   DASHBOARD: '/dashboard',

@@ -15,7 +15,7 @@ export default function Layout({
           'w-full flex justify-between items-center',
         )}
       >
-        <Brand hyperlink />
+        <Brand />
         <ThemeSelection />
       </div>
       <main className={clsx('flex items-center justify-center', 'size-full')}>

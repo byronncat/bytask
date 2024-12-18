@@ -4,7 +4,7 @@ import session from '@/libraries/session';
 import { ROUTE } from '@/constants/server';
 import type { SessionPayload } from 'api';
 
-const publicRoutes = [ROUTE.ROOT];
+const publicRoutes = [ROUTE.LANDING];
 const protectedRoutes = [ROUTE.DASHBOARD];
 const authRoutes = [ROUTE.LOGIN, ROUTE.SIGNUP];
 
