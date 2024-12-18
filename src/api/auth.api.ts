@@ -2,6 +2,7 @@
 
 import type { IApi } from 'api';
 import type { LoginFormData, SignupFormData } from '@/constants/form';
+import { IUser } from 'schema';
 
 const serverHost = process.env.NEXT_PUBLIC_DOMAIN;
 if (!serverHost) throw Error('Server Host is not defined');
@@ -10,6 +11,7 @@ const apiUrl = {
   login: `${serverHost}/v1/auth/login`,
   signup: `${serverHost}/v1/auth/signup`,
   logout: `${serverHost}/v1/auth/logout`,
+  authenticate: `${serverHost}/v1/auth/authenticate`,
 };
 
 export async function login({
@@ -81,6 +83,30 @@ export async function logout(): Promise<IApi> {
       };
     })
     .catch((error) => {
+      return {
+        success: false,
+        message: error,
+      };
+    });
+}
+
+export async function authenticate(): Promise<IApi<IUser>> {
+  return await fetch(apiUrl.authenticate, {
+    method: 'GET',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+  })
+    .then(async (res) => {
+      const data = await res.json();
+      if (!res.ok) throw Error(data);
+      return {
+        success: true,
+        message: 'User authenticated',
+        data,
+      };
+    })
+    .catch(async (error) => {
       return {
         success: false,
         message: error,

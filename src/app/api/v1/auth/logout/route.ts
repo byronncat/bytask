@@ -4,7 +4,7 @@ import { STATUS_CODE } from '@/constants/server';
 export async function DELETE() {
   try {
     return await session
-      .discard()
+      .clear()
       .then(
         () =>
           new Response(JSON.stringify('Logout successful!'), {
@@ -27,7 +27,7 @@ export async function DELETE() {
     console.error('[Error]:', error);
     const errorMessage =
       typeof error === 'string' ? error : 'Internal server error';
-    return new Response(errorMessage, {
+    return new Response(JSON.stringify(errorMessage), {
       status: STATUS_CODE.INTERNAL_SERVER_ERROR,
       headers: {
         'Content-Type': 'application/json',

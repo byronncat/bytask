@@ -19,27 +19,14 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useAuth } from '@/providers';
 import { Divider } from '@/components';
 import { ROUTE } from '@/constants/server';
+import workSpace from '@/assets/images/workspace-icon.webp';
 import type { IconProp } from '@fortawesome/fontawesome-svg-core';
-
-import workSpace from '@/assets/workspace-icon.webp';
-
-type Workspace = {
-  name: string;
-  description?: string;
-  icon?: string;
-};
-
-const TEMP_WORKSPACE = {
-  name: 'Coding',
-  description: 'Workspace description',
-  icon: workSpace.src,
-} as Workspace;
 
 export default function Sidebar({
   className,
 }: Readonly<{ className: string }>) {
   const [minimized, setMinimized] = useState(false);
-  const { logout } = useAuth();
+  const { user, logout } = useAuth();
 
   return (
     <div
@@ -67,7 +54,7 @@ export default function Sidebar({
         {!minimized && (
           <div className={clsx('flex items-center', minimized && 'hidden')}>
             <Image
-              src={TEMP_WORKSPACE.icon || 'https://via.placeholder.com/24'}
+              src={user?.profile_photo?.url || workSpace.src}
               alt="workspace-icon"
               width={32}
               height={32}
@@ -79,7 +66,7 @@ export default function Sidebar({
                 'w-36 text-ellipsis overflow-hidden',
               )}
             >
-              {TEMP_WORKSPACE.name}
+              {user?.username}
             </h1>
           </div>
         )}
@@ -166,7 +153,13 @@ export default function Sidebar({
 function Heading({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
     <div className="pl-3 py-1">
-      <h2 className={clsx('font-semibold', 'h-6', 'flex items-center')}>
+      <h2
+        className={clsx(
+          'font-semibold whitespace-nowrap',
+          'h-6',
+          'flex items-center',
+        )}
+      >
         {children}
       </h2>
     </div>
@@ -224,7 +217,9 @@ function ListItem({
           />
         </div>
       ) : null}
-      <span className={clsx(textItalic && 'italic')}>{text || children}</span>
+      <span className={clsx(textItalic && 'italic', 'whitespace-nowrap')}>
+        {text || children}
+      </span>
     </li>
   );
 

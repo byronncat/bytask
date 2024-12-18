@@ -3,6 +3,7 @@ import session from '@/libraries/session';
 import { UserModel } from '@/database';
 import { password as passwordHelper } from '@/helpers';
 import { STATUS_CODE } from '@/constants/server';
+import type { IUser } from 'schema';
 
 export async function POST(request: Request) {
   try {
@@ -13,9 +14,9 @@ export async function POST(request: Request) {
 
     if (result.success) {
       const { identity, password } = data;
-      const user = await UserModel.findOne({
+      const user = (await UserModel.findOne({
         $or: [{ email: identity }, { username: identity }],
-      });
+      })) as IUser;
 
       if (!user)
         return new Response(JSON.stringify('User not found!'), {
@@ -54,7 +55,7 @@ export async function POST(request: Request) {
     console.error('[Error]:', error);
     const errorMessage =
       typeof error === 'string' ? error : 'Internal server error';
-    return new Response(errorMessage, {
+    return new Response(JSON.stringify(errorMessage), {
       status: STATUS_CODE.INTERNAL_SERVER_ERROR,
       headers: {
         'Content-Type': 'application/json',

@@ -1,7 +1,6 @@
 import { cookies } from 'next/headers';
 import { SignJWT, jwtVerify } from 'jose';
 import type { SessionPayload } from 'api';
-// import 'colors';
 
 const secretKey = process.env.SESSION_SECRET || 'secret';
 const encodedKey = new TextEncoder().encode(secretKey);
@@ -22,7 +21,6 @@ async function decrypt(session: string | undefined = '') {
     });
     return payload;
   } catch (error) {
-    console.error('[Session]', '- Failed to decrypt session', error);
     return null;
   }
 }
@@ -51,7 +49,7 @@ async function create(userId: string) {
   }
 }
 
-export async function discard() {
+export async function clear() {
   try {
     const cookieStore = await cookies();
     cookieStore.delete('session');
@@ -63,7 +61,7 @@ export async function discard() {
 
 const session = {
   create,
-  discard,
+  clear,
   decrypt,
 };
 

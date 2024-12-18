@@ -1,8 +1,8 @@
+'use client';
+
 import Image from 'next/image';
 import Link from 'next/link';
-import { cookies } from 'next/headers';
 import clsx from 'clsx';
-
 import { Brand, ThemeSelection } from '@/components';
 import { ROUTE } from '@/constants/server';
 import backgroundPattern from '@/assets/images/background-pattern.png';
@@ -19,10 +19,7 @@ export default function LandingPage() {
   );
 }
 
-async function Header({ className }: Readonly<{ className?: string }>) {
-  const cookieStore = await cookies();
-  const session = cookieStore.get('session');
-
+function Header({ className }: Readonly<{ className?: string }>) {
   return (
     <div
       className={clsx(
@@ -33,43 +30,34 @@ async function Header({ className }: Readonly<{ className?: string }>) {
       )}
     >
       <Brand />
-      <div className="flex items-center space-x-4 h-8">
-        <Link
-          href={ROUTE.LOGIN}
-          className={clsx(
-            'test-sm font-semibold',
-            'px-2 h-full',
-            'flex items-center',
-            'transition-opacity duration-200 hover:opacity-60',
-          )}
-        >
-          {session ? 'Dashboard' : 'Login'}
-        </Link>
-        <span className="border-r border-border h-6" />
-        <ThemeSelection />
-      </div>
+      <ThemeSelection />
     </div>
   );
 }
 
 function Content() {
   return (
-    <section className={clsx('relative lg:h-full', 'py-12 sm:py-16 lg:pb-20')}>
-      <BackgroundPattern className="absolute bottom-0 right-0" />
+    <section className={clsx('relative sm:h-full', 'py-12 sm:py-16 lg:pb-20')}>
+      <div className={clsx('absolute bottom-0 right-0', 'overflow-hidden')}>
+        <Image
+          src={backgroundPattern.src}
+          alt="background-pattern"
+          width={backgroundPattern.width}
+          height={backgroundPattern.height}
+          className={clsx(
+            'origin-bottom-right',
+            'transform scale-150 lg:scale-75',
+          )}
+        />
+      </div>
 
       <div
-        className={clsx(
-          'relative h-full',
-          'px-4 sm:px-6 lg:px-8',
-          'mx-auto max-w-7xl',
-        )}
+        className={clsx('relative', 'px-4 mx-auto max-w-7xl sm:px-6 lg:px-8')}
       >
         <div
           className={clsx(
-            'h-full',
-            'grid gap-y-16 lg:gap-y-4',
-            'grid-cols-1 lg:grid-cols-2',
-            'lg:items-center',
+            'grid gap-y-4',
+            'grid-cols-1 lg:items-center lg:grid-cols-2',
           )}
         >
           <div
@@ -82,9 +70,8 @@ function Content() {
             <h1
               className={clsx(
                 'text-4xl font-bold leading-tight',
-                'sm:text-5xl',
-                'lg:text-6xl',
-                'text-contrast/[.9]',
+                'sm:text-5xl sm:leading-tight',
+                'lg:text-6xl lg:leading-tight',
               )}
             >
               Simple, flexible, and powerful.
@@ -94,78 +81,38 @@ function Content() {
               what needs to get done.
             </p>
 
-            <Button
+            <Link
               href={ROUTE.SIGNUP}
               className={clsx(
-                'px-8 py-4',
-                'mt-8 sm:mt-10',
+                'inline-flex',
+                'px-8 py-4 mt-8',
                 'text-lg font-bold',
+                'bg-on-background text-background',
+                'transition-opacity duration-200 hover:opacity-60',
+                'border border-transparent rounded',
+                'sm:mt-10',
+                'focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-on-background',
               )}
             >
               Sign up for free
-            </Button>
+            </Link>
           </div>
 
-          <div
-            className={clsx(
-              'relative',
-              'xl:col-span-1 xl:h-full',
-              'aspect-square xl:aspect-auto',
-            )}
-          >
+          <div className="xl:col-span-1 h-full">
+            {/* <img
+              className="w-full mx-auto"
+              src="https://cdn.rareblocks.xyz/collection/clarity/images/hero/1/illustration.png"
+              alt=""
+            /> */}
             <Image
               src={illustration.src}
               alt="illustration"
-              fill
-              sizes="(min-width: 1024px) 50vw, 100vw"
-              className="object-contain"
+              width={illustration.width}
+              height={illustration.height}
             />
           </div>
         </div>
       </div>
     </section>
-  );
-}
-
-function BackgroundPattern({ className }: Readonly<{ className?: string }>) {
-  return (
-    <div className={clsx('overflow-hidden', className)}>
-      <Image
-        src={backgroundPattern.src}
-        alt="background-pattern"
-        width={backgroundPattern.width}
-        height={backgroundPattern.height}
-        className={clsx(
-          'origin-bottom-right',
-          'transform scale-150 lg:scale-75',
-          'theme-invert',
-        )}
-      />
-    </div>
-  );
-}
-
-interface ButtonProps {
-  children: string;
-  href: string;
-  className?: string;
-}
-
-function Button({ children, href, className }: Readonly<ButtonProps>) {
-  return (
-    <Link href={href}>
-      <button
-        className={clsx(
-          'inline-flex',
-          'bg-contrast/[.9] text-background',
-          'transition-opacity duration-200 hover:opacity-60',
-          'border border-transparent rounded',
-          'focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-on-background',
-          className,
-        )}
-      >
-        {children}
-      </button>
-    </Link>
   );
 }
