@@ -1,9 +1,10 @@
 import { MissionModel } from '@/database';
 import { getUser } from '@/helpers';
 import { STATUS_CODE } from '@/constants/server';
+import { FILTER_BY, SORT_BY } from '@/constants/taskMetadata';
+
 import type { NextRequest } from 'next/server';
-import { SORT_BY } from '@/constants/convention';
-import { IMission } from 'schema';
+import type { IMission } from 'schema';
 
 export async function POST() {
   try {
@@ -49,6 +50,8 @@ export async function GET(request: NextRequest) {
     const searchParams = request.nextUrl.searchParams;
     const sortBy = searchParams.get('sortBy');
     const sortOrder = searchParams.get('sortOrder');
+    const filterBy = searchParams.get('filterBy') as FILTER_BY | null;
+    const search = searchParams.get('search');
 
     const user = await getUser();
     if (!user) {
@@ -66,9 +69,17 @@ export async function GET(request: NextRequest) {
     if (sortBy === SORT_BY.ACTIVED_AT)
       sortQuery.actived_at = sortOrder === 'asc' ? 1 : -1;
 
-    const missions = await MissionModel.find({ user_id: user.id }).sort(
-      sortQuery,
-    );
+    const filterQuery: Partial<Record<keyof IMission, number>> = {};
+    if (filterBy) {
+      filterQuery.status = Object.values(FILTER_BY).indexOf(filterBy);
+    }
+
+    const missions = await MissionModel.find({
+      user_id: user.id,
+      title: { $regex: search || '', $options: 'i' },
+      ...filterQuery,
+    }).sort(sortQuery);
+
     return new Response(JSON.stringify(missions), {
       status: STATUS_CODE.OK,
       headers: {

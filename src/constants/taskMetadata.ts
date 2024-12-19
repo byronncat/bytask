@@ -14,3 +14,10 @@ export enum SORT_BY {
   TITLE = 'title',
   ACTIVED_AT = 'dateLastActivity',
 }
+
+export enum FILTER_BY {
+  TODO = 'todo',
+  IN_PROGRESS = 'inProgress',
+  DONE = 'done',
+  ARCHIVED = 'archived',
+}

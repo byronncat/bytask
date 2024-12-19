@@ -10,14 +10,14 @@ import {
 } from '@fortawesome/free-solid-svg-icons';
 import { faStar } from '@fortawesome/free-regular-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import type { MissionMetadata, TaskList } from 'schema';
+import type { TaskList } from 'schema';
 import { temp_missions } from '@/__mocks__';
 
 export default function BoardViewPage() {
   const [
     mission,
     // setMission
-  ] = useState<MissionMetadata>(temp_missions[0]);
+  ] = useState<any>(temp_missions[0]);
   const [lists, setLists] = useState(temp_missions[0].taskLists || []);
 
   // const [draggingCard, setDraggingCard] = useState<string | null>(null);
@@ -85,7 +85,7 @@ export default function BoardViewPage() {
           'overflow-x-auto',
         )}
       >
-        {lists.map((list) => (
+        {lists.map((list: any) => (
           <List key={list.id} {...list} className="flex-shrink-0" />
         ))}
         <AddListButton onClick={addListHandler} className="flex-shrink-0" />

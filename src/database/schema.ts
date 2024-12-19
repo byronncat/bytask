@@ -2,7 +2,7 @@ import mongoose from 'mongoose';
 import { v4 as uuidv4 } from 'uuid';
 import type { Document, Types } from 'mongoose';
 import type { ILabel, IMission, IUser } from 'schema';
-import { STATUS } from '@/constants/convention';
+import { STATUS } from '@/constants/taskMetadata';
 
 interface UserDocument extends IUser, Document {
   id: IUser['id'];

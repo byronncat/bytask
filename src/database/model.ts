@@ -11,17 +11,17 @@ mongoose.set('toJSON', {
   },
 });
 
-function getModel(modelName: string, schema: mongoose.Schema) {
-  if (mongoose.models[modelName]) {
-    delete mongoose.models[modelName];
-  }
-  return mongoose.model(modelName, schema);
-}
+// function getModel(modelName: string, schema: mongoose.Schema) {
+//   if (mongoose.models[modelName]) {
+//     delete mongoose.models[modelName];
+//   }
+//   return mongoose.model(modelName, schema);
+// }
 
-// export const UserModel =
-//   mongoose.models.user || mongoose.model('user', UserSchema);
-// export const MissionModel =
-//   mongoose.models.mission || mongoose.model('mission', MissionSchema);
+// export const UserModel = getModel('user', UserSchema);
+// export const MissionModel = getModel('mission', MissionSchema);
 
-export const UserModel = getModel('user', UserSchema);
-export const MissionModel = getModel('mission', MissionSchema);
+export const UserModel =
+  mongoose.models.user || mongoose.model('user', UserSchema);
+export const MissionModel =
+  mongoose.models.mission || mongoose.model('mission', MissionSchema);
