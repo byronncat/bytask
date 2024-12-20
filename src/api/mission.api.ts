@@ -13,7 +13,9 @@ const apiUrl = {
   deleteMission: `${serverHost}/v1/missions`,
 };
 
-export async function create(data: Pick<IMission, 'title'>): Promise<IApi> {
+export async function create(
+  data: Pick<IMission, 'title'>,
+): Promise<IApi<IMission['id']>> {
   return await fetch(apiUrl.createMission, {
     method: 'POST',
     headers: {
@@ -22,11 +24,12 @@ export async function create(data: Pick<IMission, 'title'>): Promise<IApi> {
     body: JSON.stringify(data),
   })
     .then(async (res) => {
-      const message = await res.json();
-      if (!res.ok) throw Error(message);
+      const data = await res.json();
+      if (!res.ok) throw Error('Mission creation failed');
       return {
         success: true,
-        message,
+        message: 'Mission created successfully',
+        data,
       };
     })
     .catch((error) => {

@@ -90,14 +90,15 @@ export default function Form<T extends FieldValues>({
   );
 }
 
-interface FieldProps<T extends FieldValues> extends IField<T> {
+interface FieldProps<T extends FieldValues> extends Omit<IField<T>, 'label'> {
   id: Path<T>;
   register: UseFormRegister<T>;
   error?: FieldError;
   validation?: RegisterOptions<T, Path<T>>;
+  label?: string | React.ReactNode;
 }
 
-function Field<T extends FieldValues>({
+export function Field<T extends FieldValues>({
   id,
   label,
   placeholder,
@@ -114,12 +115,19 @@ function Field<T extends FieldValues>({
 
   return (
     <div>
-      <label
-        htmlFor={id}
-        className={clsx('block', 'text-sm font-medium text-on-background/[.9]')}
-      >
-        {label}
-      </label>
+      {typeof label === 'string' ? (
+        <label
+          htmlFor={id}
+          className={clsx(
+            'block',
+            'text-sm font-medium text-on-background/[.9]',
+          )}
+        >
+          {label}
+        </label>
+      ) : (
+        label
+      )}
       <div className="relative">
         <input
           id={id}
@@ -128,10 +136,11 @@ function Field<T extends FieldValues>({
           className={clsx(
             'block w-full h-10',
             'mt-1 px-3',
-            'border border-on-background/[.2]',
+            'border',
             'rounded-md shadow-sm',
             'focus:ring focus:ring-on-background/[.2] focus:ring-opacity-50 focus:border-on-background sm:text-sm',
             'focus-visible:outline-none',
+            error ? 'border-red-500' : 'border-on-background/[.2]',
           )}
           {...register(id, validation)}
         />
@@ -154,8 +163,8 @@ function Field<T extends FieldValues>({
           </button>
         )}
         {error && (
-          <p className={clsx('text-red-500 text-xs italic', 'mt-3')}>
-            {error.message}
+          <p className={clsx('text-red-500 text-sm italic', 'mt-1')}>
+            🔥 {error?.message}
           </p>
         )}
       </div>

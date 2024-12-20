@@ -6,7 +6,7 @@ import { FILTER_BY, SORT_BY } from '@/constants/taskMetadata';
 import type { NextRequest } from 'next/server';
 import type { IMission } from 'schema';
 
-export async function POST() {
+export async function POST(request: NextRequest) {
   try {
     const user = await getUser();
     if (!user) {
@@ -18,20 +18,18 @@ export async function POST() {
       });
     }
 
-    await MissionModel.create({
-      title: 'Default mission',
+    const title = (await request.json()).title;
+    const mission = await MissionModel.create({
+      title,
       user_id: user.id,
     });
 
-    return new Response(
-      JSON.stringify({ message: 'Mission created successfully' }),
-      {
-        status: STATUS_CODE.CREATED,
-        headers: {
-          'Content-Type': 'application/json',
-        },
+    return new Response(JSON.stringify(mission.id), {
+      status: STATUS_CODE.CREATED,
+      headers: {
+        'Content-Type': 'application/json',
       },
-    );
+    });
   } catch (error) {
     console.error('[Error]:', error);
     const errorMessage =

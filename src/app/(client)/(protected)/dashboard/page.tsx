@@ -1,6 +1,7 @@
 'use client';
 
 import { useCallback, useEffect, useState } from 'react';
+import clsx from 'clsx';
 import { missionAction } from '@/api';
 import { Divider } from '@/components';
 import { Header, QueryControls, MissionBoards } from './_components';
@@ -25,7 +26,7 @@ export default function DashboardPage() {
   }, [fetchMissions]);
 
   return (
-    <div className="size-full max-w-7xl mx-auto">
+    <div className={clsx('size-full max-w-7xl mx-auto overflow-y-auto')}>
       <Header />
       <Divider className="mx-8" />
       <div className="p-8">
