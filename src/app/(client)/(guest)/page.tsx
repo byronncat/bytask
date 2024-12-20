@@ -1,8 +1,8 @@
-'use client';
-
 import Image from 'next/image';
 import Link from 'next/link';
+import { cookies } from 'next/headers';
 import clsx from 'clsx';
+
 import { Brand, ThemeSelection } from '@/components';
 import { ROUTE } from '@/constants/server';
 import backgroundPattern from '@/assets/images/background-pattern.png';
@@ -12,14 +12,16 @@ export default function LandingPage() {
   return (
     <div className="w-full h-screen">
       <Header className={clsx('h-12 px-4', 'bg-foreground')} />
-      <div className="h-[calc(100vh-3rem)]">
+      <div className={clsx('h-[calc(100vh-3rem)]', 'overflow-y-auto')}>
         <Content />
       </div>
     </div>
   );
 }
 
-function Header({ className }: Readonly<{ className?: string }>) {
+async function Header({ className }: Readonly<{ className?: string }>) {
+  const session = (await cookies()).get('session')?.value;
+
   return (
     <div
       className={clsx(
@@ -30,14 +32,38 @@ function Header({ className }: Readonly<{ className?: string }>) {
       )}
     >
       <Brand />
-      <ThemeSelection />
+      <div className="flex items-center space-x-3">
+        {session ? (
+          <Link
+            href={ROUTE.SIGNUP}
+            className="font-semibold text-sm text-on-foreground"
+          >
+            Dashboard
+          </Link>
+        ) : (
+          <Link
+            href={ROUTE.LOGIN}
+            className="font-semibold text-sm text-on-foreground"
+          >
+            Log in
+          </Link>
+        )}
+        <span className={clsx('h-6', 'border-r border-border')} />
+        <ThemeSelection />
+      </div>
     </div>
   );
 }
 
 function Content() {
   return (
-    <section className={clsx('relative sm:h-full', 'py-12 sm:py-16 lg:pb-20')}>
+    <section
+      className={clsx(
+        'relative',
+        'min-h-full lg:h-full',
+        'py-12 sm:py-16 lg:pb-20',
+      )}
+    >
       <div className={clsx('absolute bottom-0 right-0', 'overflow-hidden')}>
         <Image
           src={backgroundPattern.src}
@@ -47,15 +73,21 @@ function Content() {
           className={clsx(
             'origin-bottom-right',
             'transform scale-150 lg:scale-75',
+            'theme-invert',
           )}
         />
       </div>
 
       <div
-        className={clsx('relative', 'px-4 mx-auto max-w-7xl sm:px-6 lg:px-8')}
+        className={clsx(
+          'relative',
+          'h-full max-w-7xl',
+          'px-4 mx-auto sm:px-6 lg:px-8',
+        )}
       >
         <div
           className={clsx(
+            'h-full',
             'grid gap-y-4',
             'grid-cols-1 lg:items-center lg:grid-cols-2',
           )}
@@ -72,6 +104,7 @@ function Content() {
                 'text-4xl font-bold leading-tight',
                 'sm:text-5xl sm:leading-tight',
                 'lg:text-6xl lg:leading-tight',
+                'text-contrast/[.9]',
               )}
             >
               Simple, flexible, and powerful.
@@ -85,12 +118,11 @@ function Content() {
               href={ROUTE.SIGNUP}
               className={clsx(
                 'inline-flex',
-                'px-8 py-4 mt-8',
+                'px-8 py-4 mt-8 sm:mt-10',
                 'text-lg font-bold',
-                'bg-on-background text-background',
+                'bg-contrast/[.93] text-background',
                 'transition-opacity duration-200 hover:opacity-60',
                 'border border-transparent rounded',
-                'sm:mt-10',
                 'focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-on-background',
               )}
             >
@@ -98,17 +130,20 @@ function Content() {
             </Link>
           </div>
 
-          <div className="xl:col-span-1 h-full">
-            {/* <img
-              className="w-full mx-auto"
-              src="https://cdn.rareblocks.xyz/collection/clarity/images/hero/1/illustration.png"
-              alt=""
-            /> */}
+          <div
+            className={clsx(
+              'relative',
+              'h-full',
+              'aspect-square lg:aspect-auto',
+              'xl:col-span-1',
+            )}
+          >
             <Image
               src={illustration.src}
               alt="illustration"
-              width={illustration.width}
-              height={illustration.height}
+              fill
+              sizes="100%"
+              className="object-contain"
             />
           </div>
         </div>
