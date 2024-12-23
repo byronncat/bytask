@@ -1,12 +1,12 @@
 import mongoose from 'mongoose';
 import { v4 as uuidv4 } from 'uuid';
 import type { Document, Types } from 'mongoose';
-import type { ILabel, IMission, IUser } from 'schema';
+import type { ILabel, IMission, ITask, ITaskList, User } from 'schema';
 import { STATUS } from '@/constants/taskMetadata';
 
-interface UserDocument extends IUser, Document {
-  id: IUser['id'];
-  _doc?: IUser;
+interface UserDocument extends User, Document {
+  id: User['id'];
+  _doc?: User;
 }
 
 const UserSchema = new mongoose.Schema<UserDocument>({
@@ -55,4 +55,29 @@ const MissionSchema = new mongoose.Schema<MissionDocument>({
   created_at: { type: Date, required: true, default: Date.now },
 });
 
-export { UserSchema, MissionSchema };
+interface TaskListDocument extends ITaskList, Document {
+  id: ITaskList['id'];
+  _doc?: ITaskList;
+}
+
+const TaskListSchema = new mongoose.Schema<TaskListDocument>({
+  title: { type: String, required: true },
+  mission_id: { type: String, required: true, ref: 'mission' },
+});
+
+interface TaskDocument extends ITask, Document {
+  id: ITask['id'];
+  _doc?: ITask;
+}
+
+const TaskSchema = new mongoose.Schema<TaskDocument>({
+  title: { type: String, required: true },
+  mission_id: { type: String, required: true, ref: 'mission' },
+  list_id: { type: String, required: true, ref: 'taskList' },
+  description: { type: String },
+  label: { type: String, ref: 'label' },
+  startDate: { type: Date },
+  dueDate: { type: Date },
+});
+
+export { UserSchema, MissionSchema, TaskListSchema, TaskSchema };

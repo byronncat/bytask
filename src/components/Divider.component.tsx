@@ -14,8 +14,8 @@ export default function Divider({ text, className }: Readonly<DividerProps>) {
         text
           ? 'before:flex-1 before:border-t before:me-4 after:flex-1 after:border-t after:ms-4'
           : 'before:flex-1 before:border-t',
-        'text-border',
-        'before:border-border after:border-border',
+        'text-black/[.6] dark:text-white/[.6]',
+        'before:border-divider after:border-divider',
       )}
     >
       {text}

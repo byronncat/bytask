@@ -4,15 +4,15 @@ import { cookies } from 'next/headers';
 import clsx from 'clsx';
 
 import { Brand, ThemeSelection } from '@/components';
-import { ROUTE } from '@/constants/server';
+import { ROUTE } from '@/constants/serverConfig';
 import backgroundPattern from '@/assets/images/background-pattern.png';
-import illustration from '@/assets/images/illustration.webp';
+import illustration from '@/assets/images/illustration.png';
 
 export default function LandingPage() {
   return (
     <div className="w-full h-screen">
-      <Header className={clsx('h-12 px-4', 'bg-foreground')} />
-      <div className={clsx('h-[calc(100vh-3rem)]', 'overflow-y-auto')}>
+      <Header className={clsx('px-4 py-2', 'bg-foreground')} />
+      <div className={clsx('h-[calc(100vh-3rem-1px)]', 'overflow-y-auto')}>
         <Content />
       </div>
     </div>
@@ -20,36 +20,24 @@ export default function LandingPage() {
 }
 
 async function Header({ className }: Readonly<{ className?: string }>) {
-  const session = (await cookies()).get('session')?.value;
+  const cookieStore = await cookies();
+  const session = cookieStore.get('session')?.value;
 
+  const isLogged = session ? true : false;
   return (
-    <div
-      className={clsx(
-        className,
-        'w-full',
-        'flex items-center justify-between',
-        'border-b border-border',
-      )}
-    >
-      <Brand />
-      <div className="flex items-center space-x-3">
-        {session ? (
+    <div className={clsx('w-full', 'border-b border-divider', className)}>
+      <div className={clsx('flex items-center justify-between', 'h-8')}>
+        <Brand className="h-8" />
+        <div className={clsx('flex items-center', 'space-x-3')}>
           <Link
-            href={ROUTE.SIGNUP}
-            className="font-semibold text-sm text-on-foreground"
+            href={isLogged ? ROUTE.DASHBOARD : ROUTE.LOGIN}
+            className="font-semibold text-sm"
           >
-            Dashboard
+            {isLogged ? 'Dashboard' : 'Log in'}
           </Link>
-        ) : (
-          <Link
-            href={ROUTE.LOGIN}
-            className="font-semibold text-sm text-on-foreground"
-          >
-            Log in
-          </Link>
-        )}
-        <span className={clsx('h-6', 'border-r border-border')} />
-        <ThemeSelection />
+          <span className={clsx('h-6', 'border-r border-divider')} />
+          <ThemeSelection />
+        </div>
       </div>
     </div>
   );
@@ -61,6 +49,7 @@ function Content() {
       className={clsx(
         'relative',
         'min-h-full lg:h-full',
+        'flex items-center justify-center',
         'py-12 sm:py-16 lg:pb-20',
       )}
     >
@@ -73,22 +62,18 @@ function Content() {
           className={clsx(
             'origin-bottom-right',
             'transform scale-150 lg:scale-75',
-            'theme-invert',
+            'dark:invert',
           )}
         />
       </div>
 
       <div
-        className={clsx(
-          'relative',
-          'h-full max-w-7xl',
-          'px-4 mx-auto sm:px-6 lg:px-8',
-        )}
+        className={clsx('relative', 'h-full max-w-7xl', 'px-4 sm:px-6 lg:px-8')}
       >
         <div
           className={clsx(
             'h-full',
-            'grid gap-y-4',
+            'grid gap-y-16',
             'grid-cols-1 lg:items-center lg:grid-cols-2',
           )}
         >
@@ -104,7 +89,7 @@ function Content() {
                 'text-4xl font-bold leading-tight',
                 'sm:text-5xl sm:leading-tight',
                 'lg:text-6xl lg:leading-tight',
-                'text-contrast/[.9]',
+                'text-black dark:text-white',
               )}
             >
               Simple, flexible, and powerful.
@@ -120,10 +105,9 @@ function Content() {
                 'inline-flex',
                 'px-8 py-4 mt-8 sm:mt-10',
                 'text-lg font-bold',
-                'bg-contrast/[.93] text-background',
+                'bg-primary text-background',
                 'transition-opacity duration-200 hover:opacity-60',
                 'border border-transparent rounded',
-                'focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-on-background',
               )}
             >
               Sign up for free
@@ -133,8 +117,7 @@ function Content() {
           <div
             className={clsx(
               'relative',
-              'h-full',
-              'aspect-square lg:aspect-auto',
+              'w-full h-full aspect-video	',
               'xl:col-span-1',
             )}
           >
@@ -144,6 +127,7 @@ function Content() {
               fill
               sizes="100%"
               className="object-contain"
+              loading="lazy"
             />
           </div>
         </div>

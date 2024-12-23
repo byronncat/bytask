@@ -1,6 +1,7 @@
 import type { Config } from 'tailwindcss';
 
 export default {
+  darkMode: ['selector', '[data-theme="dark"]'],
   content: [
     './src/pages/**/*.{js,ts,jsx,tsx,mdx}',
     './src/components/**/*.{js,ts,jsx,tsx,mdx}',
@@ -10,19 +11,14 @@ export default {
     extend: {
       colors: {
         background: 'rgb(var(--background))',
-        foreground: 'rgb(var(--foreground))',
-        'surface-1': 'rgb(var(--surface-1))',
-        'surface-2': 'rgb(var(--surface-2))',
         'on-background': 'rgb(var(--on-background))',
-        'on-foreground': 'rgb(var(--on-foreground))',
+        primary: 'rgb(var(--primary))',
+        'on-primary': 'rgb(var(--on-primary))',
+        'surface-1': 'rgb(var(--surface-1))',
         'on-surface-1': 'rgb(var(--on-surface-1))',
+        'surface-2': 'rgb(var(--surface-2))',
         'on-surface-2': 'rgb(var(--on-surface-2))',
-        border: 'var(--border)',
-        contrast: 'rgb(var(--contrast))',
-      },
-      fontFamily: {
-        sans: ['var(--font-geist-sans)'],
-        mono: ['var(--font-geist-mono)'],
+        divider: 'var(--divider)',
       },
     },
   },

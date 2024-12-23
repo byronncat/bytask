@@ -2,8 +2,8 @@ import validator from '@/libraries/serverValidation';
 import session from '@/libraries/session';
 import { UserModel } from '@/database';
 import { password as passwordHelper } from '@/helpers';
-import { STATUS_CODE } from '@/constants/server';
-import type { IUser } from 'schema';
+import { STATUS_CODE } from '@/constants/serverConfig';
+import type { User } from 'schema';
 
 export async function POST(request: Request) {
   try {
@@ -16,7 +16,7 @@ export async function POST(request: Request) {
       const { identity, password } = data;
       const user = (await UserModel.findOne({
         $or: [{ email: identity }, { username: identity }],
-      })) as IUser;
+      })) as User;
 
       if (!user)
         return new Response(JSON.stringify('User not found!'), {
@@ -34,9 +34,7 @@ export async function POST(request: Request) {
           },
         });
 
-      await session.create(user.id).catch(() => {
-        console.error('[Login]:', 'Failed to create session');
-      });
+      await session.create(user.id);
       return new Response(JSON.stringify('Login successful!'), {
         status: STATUS_CODE.OK,
         headers: {
@@ -52,10 +50,9 @@ export async function POST(request: Request) {
       });
     }
   } catch (error) {
-    console.error('[Error]:', error);
-    const errorMessage =
-      typeof error === 'string' ? error : 'Internal server error';
-    return new Response(JSON.stringify(errorMessage), {
+    const message = typeof error === 'string' ? error : 'Internal server error';
+    console.error('[Error]:', message);
+    return new Response(JSON.stringify(message), {
       status: STATUS_CODE.INTERNAL_SERVER_ERROR,
       headers: {
         'Content-Type': 'application/json',

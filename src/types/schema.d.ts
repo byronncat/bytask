@@ -3,7 +3,7 @@ declare module 'schema' {
   type HexColor = string;
   type Status = number;
 
-  export type IUser = {
+  export type User = {
     readonly id: uuidv4;
     email: string;
     username: string;
@@ -13,7 +13,7 @@ declare module 'schema' {
 
   export type IMission = {
     readonly id: string;
-    user_id: IUser['id'];
+    user_id: User['id'];
     title: string;
     labels: ILabel[];
     description?: string;
@@ -22,15 +22,17 @@ declare module 'schema' {
     created_at?: Date;
   };
 
-  export type TaskList = {
-    id: string;
+  export type ITaskList = {
+    readonly id: string;
     title: string;
-    tasks: Task['id'][];
+    mission_id: IMission['id'];
   };
 
-  export type Task = {
-    id: string;
+  export type ITask = {
+    readonly id: string;
     title: string;
+    mission_id: IMission['id'];
+    list_id: ITaskList['id'];
     description?: string;
     label?: ILabel['id'];
     startDate?: Date;

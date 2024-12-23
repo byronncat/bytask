@@ -1,5 +1,10 @@
 import mongoose from 'mongoose';
-import { MissionSchema, UserSchema } from './schema';
+import {
+  MissionSchema,
+  TaskListSchema,
+  TaskSchema,
+  UserSchema,
+} from './schema';
 
 mongoose.set('toJSON', {
   virtuals: true,
@@ -25,3 +30,7 @@ export const UserModel =
   mongoose.models.user || mongoose.model('user', UserSchema);
 export const MissionModel =
   mongoose.models.mission || mongoose.model('mission', MissionSchema);
+export const TaskListModel =
+  mongoose.models.taskList || mongoose.model('taskList', TaskListSchema);
+export const TaskModel =
+  mongoose.models.task || mongoose.model('task', TaskSchema);

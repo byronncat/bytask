@@ -1,24 +1,45 @@
 'use client';
 
 import clsx from 'clsx';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import {
   // faStar as faSolidStar,
   faEarthAfrica,
   faChartSimple,
   faPlus,
+  faX,
 } from '@fortawesome/free-solid-svg-icons';
 import { faStar } from '@fortawesome/free-regular-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import type { TaskList } from 'schema';
-import { temp_missions } from '@/__mocks__';
+import type { IMission, ITask, ITaskList } from 'schema';
+import { listAction, missionAction, taskAction } from '@/api';
+import { usePathname } from 'next/navigation';
+import { useForm } from 'react-hook-form';
+import { Field } from '@/components';
 
 export default function BoardViewPage() {
-  const [
-    mission,
-    // setMission
-  ] = useState<any>(temp_missions[0]);
-  const [lists, setLists] = useState(temp_missions[0].taskLists || []);
+  const [lists, setLists] = useState<ITaskList[]>();
+  const [mission, setMission] = useState<IMission>();
+  const pathname = usePathname();
+
+  useEffect(() => {
+    const missionId = pathname.split('/').pop() || '';
+    async function fetchMission() {
+      if (!missionId) return;
+      const { success, data } = await missionAction.getOne(missionId);
+      if (success) {
+        setMission(data);
+        await fetchLists(missionId);
+      }
+    }
+
+    async function fetchLists(missionId: string) {
+      const { success, data } = await listAction.getListByMission(missionId);
+      if (success) setLists(data);
+    }
+
+    fetchMission();
+  }, [pathname]);
 
   // const [draggingCard, setDraggingCard] = useState<string | null>(null);
   // const [draggingFromList, setDraggingFromList] = useState<string | null>(null);
@@ -70,14 +91,21 @@ export default function BoardViewPage() {
   //   if (hoveredListId === listId) setHoveredListId(null);
   // };
 
-  const addListHandler = () => {
-    const newList = { id: `list-${Date.now()}`, title: 'New list', tasks: [] };
-    setLists([...lists, newList]);
+  const addListHandler = async (data: Pick<ITaskList, 'title'>) => {
+    if (!mission) return;
+    const { success, data: listId } = await listAction.create({
+      title: data.title,
+      mission_id: mission.id,
+    });
+
+    if (success) {
+      setLists([...(lists || []), { id: listId, ...data } as ITaskList]);
+    }
   };
 
   return (
     <>
-      <Heading title={mission.title} />
+      <Heading title={mission?.title} />
       <div
         className={clsx(
           'p-3 h-[calc(100%-3.5rem)]',
@@ -85,16 +113,22 @@ export default function BoardViewPage() {
           'overflow-x-auto',
         )}
       >
-        {lists.map((list: any) => (
-          <List key={list.id} {...list} className="flex-shrink-0" />
-        ))}
-        <AddListButton onClick={addListHandler} className="flex-shrink-0" />
+        {mission &&
+          lists?.map((list) => (
+            <List
+              key={list.id}
+              {...list}
+              missionId={mission.id}
+              className="flex-shrink-0"
+            />
+          ))}
+        <AddListModal onCreate={addListHandler} className="flex-shrink-0" />
       </div>
     </>
   );
 }
 
-function Heading({ title }: Readonly<{ title: string }>) {
+function Heading({ title }: Readonly<{ title?: string }>) {
   return (
     <div
       className={clsx(
@@ -148,11 +182,34 @@ function Heading({ title }: Readonly<{ title: string }>) {
   );
 }
 
-interface ListProps extends TaskList {
+interface ListProps extends ITaskList {
   className?: string;
+  missionId: string;
 }
 
-function List({ title, tasks, className }: Readonly<ListProps>) {
+function List({
+  id: listId,
+  title,
+  className,
+  missionId,
+}: Readonly<ListProps>) {
+  const [tasks, setTasks] = useState<any[]>([]);
+  const [showModal, setShowModal] = useState(false);
+  const { register, handleSubmit } = useForm<Pick<ITask, 'title'>>();
+
+  async function taskHandler(data: Pick<ITask, 'title'>) {
+    console.log(data);
+    const { success, data: taskId } = await taskAction.create({
+      title: data.title,
+      list_id: listId,
+      mission_id: missionId,
+    });
+
+    if (success) {
+      setTasks([...tasks, { id: taskId, ...data }]);
+    }
+  }
+
   return (
     <div
       className={clsx(
@@ -167,68 +224,174 @@ function List({ title, tasks, className }: Readonly<ListProps>) {
 
       {tasks.length > 0 && (
         <ol className="space-y-2 p-2">
-          {/* {tasks.map((task) => (
+          {tasks.map((task: any) => (
             <li key={task.id}>
               <Card {...task} />
             </li>
-          ))} */}
+          ))}
         </ol>
       )}
 
-      <div className={clsx('p-2 pt-0', 'w-full')}>
-        <button
-          className={clsx(
-            'px-2 pt-2 pb-1',
-            'flex items-center',
-            'hover:bg-on-surface-1/[.2] rounded-lg w-full',
-          )}
+      {showModal ? (
+        <form
+          onSubmit={handleSubmit(taskHandler)}
+          className="flex mt-4 bg-white flex-col px-2"
         >
-          <FontAwesomeIcon icon={faPlus} className="size-4 mr-2" />
-          <div className="text-on-surface-2">Add a card</div>
-        </button>
-      </div>
+          <Field
+            id="title"
+            key="title"
+            type="text"
+            register={register}
+            placeholder=""
+            validation={{
+              required: 'Title is required',
+            }}
+          />
+
+          <div className="flex items-center space-x-2 ">
+            <button
+              type="submit"
+              className={clsx(
+                'px-2 py-1',
+                'bg-blue-400 text-surface-1',
+                'rounded',
+                'hover:opacity-80',
+              )}
+            >
+              Add Card
+            </button>
+
+            <button
+              type="button"
+              onClick={() => setShowModal(false)}
+              className={clsx(
+                'size-8',
+                'text-on-surface-2',
+                'rounded',
+                'hover:bg-contrast/[.12]',
+              )}
+            >
+              <FontAwesomeIcon icon={faX} className="size-4" />
+            </button>
+          </div>
+        </form>
+      ) : (
+        <div className={clsx('p-2 pt-0', 'w-full')}>
+          <button
+            className={clsx(
+              'px-2 pt-2 pb-1',
+              'flex items-center',
+              'hover:bg-on-surface-1/[.2] rounded-lg w-full',
+            )}
+            onClick={() => setShowModal(true)}
+          >
+            <FontAwesomeIcon icon={faPlus} className="size-4 mr-2" />
+            <div className="text-on-surface-2">Add a card</div>
+          </button>
+        </div>
+      )}
     </div>
   );
 }
 
-// interface CardProps extends Task {
-//   className?: string;
-// }
-
-// function Card({ title, className }: Readonly<CardProps>) {
-//   return (
-//     <div
-//       className={clsx(
-//         'bg-surface-2',
-//         'px-3 pt-2 pb-1',
-//         'rounded-lg shadow',
-//         'cursor-pointer',
-//         className,
-//       )}
-//     >
-//       {title}
-//     </div>
-//   );
-// }
-
-interface AddListButtonProps {
-  onClick: () => void;
+interface CardProps {
+  title: string;
   className?: string;
 }
 
-function AddListButton({ onClick, className }: Readonly<AddListButtonProps>) {
+function Card({ title, className }: Readonly<CardProps>) {
   return (
     <div
-      onClick={onClick}
       className={clsx(
-        'w-64 h-fit p-3 rounded-xl',
-        'cursor-pointer shadow',
-        'bg-on-background/[.07] hover:bg-on-background/[.2]',
+        'bg-surface-2',
+        'px-3 pt-2 pb-1',
+        'rounded-lg shadow',
+        'cursor-pointer',
         className,
       )}
     >
-      <FontAwesomeIcon icon={faPlus} className="size-4 mr-2" />
-      Add another list
+      {title}
     </div>
+  );
+}
+
+interface AddListModalProps {
+  onCreate: (data: Pick<ITaskList, 'title'>) => void;
+  className?: string;
+}
+
+function AddListModal({ onCreate, className }: Readonly<AddListModalProps>) {
+  const [isCreating, setIsCreating] = useState(false);
+  const { register, handleSubmit } = useForm<Pick<ITaskList, 'title'>>();
+
+  async function createList(data: Pick<ITaskList, 'title'>) {
+    onCreate(data);
+    setIsCreating(false);
+  }
+
+  if (!isCreating)
+    return (
+      <div
+        onClick={() => setIsCreating(true)}
+        className={clsx(
+          'w-64 h-fit p-3 rounded-xl',
+          'cursor-pointer shadow',
+          'bg-on-background/[.07] hover:bg-on-background/[.2]',
+          className,
+        )}
+      >
+        <FontAwesomeIcon icon={faPlus} className="size-4 mr-2" />
+        Add another list
+      </div>
+    );
+
+  return (
+    <form
+      onSubmit={handleSubmit(createList)}
+      className={clsx(
+        'w-64 h-fit',
+        'p-3',
+        'rounded-xl',
+        'shadow',
+        'bg-surface-1',
+        className,
+      )}
+    >
+      <Field
+        id="title"
+        key="title"
+        type="text"
+        register={register}
+        placeholder=""
+        validation={{
+          required: 'Title is required',
+        }}
+      />
+      <div className="flex items-center mt-4 space-x-2">
+        <button
+          type="submit"
+          className={clsx(
+            'px-2 py-1',
+            'bg-blue-400 text-surface-1',
+            'rounded',
+            'hover:opacity-80',
+          )}
+        >
+          Add List
+        </button>
+        <button
+          type="button"
+          onClick={() => setIsCreating(false)}
+          className={clsx(
+            'size-8',
+            'text-on-surface-2',
+            'rounded',
+            'hover:bg-contrast/[.12]',
+          )}
+        >
+          <FontAwesomeIcon icon={faX} className="size-4" />
+        </button>
+      </div>
+    </form>
   );
 }

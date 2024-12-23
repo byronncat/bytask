@@ -72,13 +72,15 @@ export default function Form<T extends FieldValues>({
       <button
         type="submit"
         className={clsx(
-          'w-full h-10 block !mt-8',
+          'block',
+          'w-full h-10',
+          'mt-8',
           'font-medium capitalize',
-          'border border-on-background',
+          'border border-primary',
           'rounded-md focus:outline-none',
-          'bg-background text-on-background',
+          'bg-background text-primary',
           'disabled:opacity-60',
-          !isFetching ? 'hover:bg-on-background hover:text-background' : 'pr-6',
+          !isFetching ? 'hover:bg-primary hover:text-background' : 'pr-6',
           'flex justify-center items-center',
         )}
         disabled={isFetching}
@@ -115,19 +117,20 @@ export function Field<T extends FieldValues>({
 
   return (
     <div>
-      {typeof label === 'string' ? (
-        <label
-          htmlFor={id}
-          className={clsx(
-            'block',
-            'text-sm font-medium text-on-background/[.9]',
-          )}
-        >
-          {label}
-        </label>
-      ) : (
-        label
-      )}
+      {label &&
+        (typeof label === 'string' ? (
+          <label
+            htmlFor={id}
+            className={clsx(
+              'block',
+              'text-sm font-medium text-on-background/[.7]',
+            )}
+          >
+            {label}
+          </label>
+        ) : (
+          label
+        ))}
       <div className="relative">
         <input
           id={id}
@@ -148,17 +151,17 @@ export function Field<T extends FieldValues>({
           <button
             type="button"
             className={clsx(
-              'h-full w-12',
+              'text-xl',
+              'h-10 w-12',
               'absolute top-0 right-0',
               'flex justify-center items-center',
-              'text-xl',
               'opacity-60 hover:opacity-100 transition-opacity duration-300',
             )}
             onClick={passwordVisibilityHandler}
           >
             <FontAwesomeIcon
               icon={inputType === 'password' ? faEye : faEyeSlash}
-              className={clsx('size-4', 'fill-on-foreground/[.7]')}
+              className="size-4"
             />
           </button>
         )}
@@ -178,7 +181,7 @@ function Spinner({ className }: Readonly<{ className?: string }>) {
       className={clsx(
         className,
         'size-4',
-        'border-2 border-on-background',
+        'border-2 border-primary',
         'rounded-full animate-spin',
         'border-solid border-t-transparent',
       )}

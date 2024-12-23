@@ -44,7 +44,6 @@ async function create(userId: string) {
       path: '/',
     });
   } catch (error) {
-    console.error('[Session]', '- Failed to create session', error);
     throw 'Failed to create session';
   }
 }

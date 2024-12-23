@@ -1,5 +1,5 @@
 import session from '@/libraries/session';
-import { STATUS_CODE } from '@/constants/server';
+import { STATUS_CODE } from '@/constants/serverConfig';
 
 export async function DELETE() {
   try {
@@ -24,10 +24,9 @@ export async function DELETE() {
           }),
       );
   } catch (error) {
-    console.error('[Error]:', error);
-    const errorMessage =
-      typeof error === 'string' ? error : 'Internal server error';
-    return new Response(JSON.stringify(errorMessage), {
+    const message = typeof error === 'string' ? error : 'Internal server error';
+    console.error('[Error]:', message);
+    return new Response(JSON.stringify(message), {
       status: STATUS_CODE.INTERNAL_SERVER_ERROR,
       headers: {
         'Content-Type': 'application/json',

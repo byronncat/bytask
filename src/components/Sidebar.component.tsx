@@ -18,7 +18,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 import { useAuth } from '@/providers';
 import { Divider } from '@/components';
-import { ROUTE } from '@/constants/server';
+import { ROUTE } from '@/constants/serverConfig';
 import workSpace from '@/assets/images/workspace-icon.webp';
 import type { IconProp } from '@fortawesome/fontawesome-svg-core';
 
@@ -123,7 +123,7 @@ export default function Sidebar({
                 <ListItem
                   type="image"
                   data={{
-                    src: 'https://via.placeholder.com/24',
+                    src: '',
                     alt: 'Workspace',
                   }}
                   text="Music App"

@@ -15,7 +15,7 @@ export default function DashboardPage() {
 
   const fetchMissions = useCallback(async function (query?: Option['query']) {
     setIsFetching(true);
-    const { success, data } = await missionAction.get(query);
+    const { success, data } = await missionAction.getMany(query);
     if (success) setMissions(data);
     setIsFetching(false);
     return success;

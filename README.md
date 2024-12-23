@@ -1,36 +1,69 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+## General
 
-## Getting Started
+Public domain: [https://bytask.vercel.app/](https://bytask.vercel.app/)
 
-First, run the development server:
+## Features
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+- [ ] Authentication & Profile Management
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+  - [ ] Sign Up: Create an account using email and password or social sign-in.
+  - [ ] Login: Access accounts via email/password or social sign-in.
+  - [ ] Logout: Securely terminate user sessions.
+  - [ ] Update full name, profile picture, and password.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+- [ ] Scheduling & Task Management
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+  - [ ] Task Management:
 
-## Learn More
+    - [ ] Users click on the “Add Task” button and input some fields such as task name, description, priority level (High/Medium/Low), estimated time, status (Todo/In Progress/Completed/Expired)
+    - [ ] Users can view the list of tasks, search tasks, filter, or sort them based on their priority and status.
+    - [ ] Users can click on any specific task to update or delete it from the task list.
 
-To learn more about Next.js, take a look at the following resources:
+  - [ ] Task Scheduling (Calendar view):
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+    - [ ] Users distribute tasks into available time slots by dragging and dropping tasks onto a calendar interface.
+    - [ ] The status of the tasks can be automatically updated if these tasks are distributed on the calendar. For example, The task is “Todo” but if the users drag it to the past, it becomes “Expired”.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+  - [ ] AI Suggestions:
 
-## Deploy on Vercel
+    - [ ] Users click on “Analyze Schedule" to send task data, and schedule details to an LLM.
+    - [ ] Provide feedback on potential adjustments, such as:
+      - [ ] Warning about overly tight schedules that may lead to burnout.
+      - [ ] Recommending prioritization changes for improved focus and balance.
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+- [ ] Focus Timer
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+  - [ ] Start the focus timer:
+
+    - [ ] Users choose a task on the calendar interface, set timer duration (e.g., 25 minutes for a Pomodoro session) and optional break duration (e.g. 5 minutes), and then start a timer for that task to track focus sessions.
+    - [ ] Display session duration and provide visual cues like a countdown or progress bar.
+
+  - [ ] During the timer session:
+
+    - [ ] Users focus on the task while the timer runs and can not use other in-app features.
+    - [ ] They can end the timer early if needed.
+
+  - [ ] End of the timer session:
+
+    - [ ] At the end of the timer session, users receive a notification that the session is complete.
+    - [ ] They can mark the task as completed, start the break timer, or restart the focus timer for another session.
+
+  - [ ] Note and edge cases:
+
+    - [ ] Prevent starting the timer for tasks that are not “In progress”.
+    - [ ] If the task deadline is met before the timer ends, end the timer immediately and notify the user.
+
+- [ ] Analytics
+
+  - [ ] Visualize user progress using focus session data.
+  - [ ] Display some necessary analytic information:
+
+    - [ ] Total time spent / Total estimated time
+    - [ ] Total time spent daily
+    - [ ] Total tasks of each status
+
+  - [ ] AI feedback:
+
+    - [ ] Identifying areas where the user is excelling.
+    - [ ] Suggesting subjects or tasks that may need more attention.
+    - [ ] Offering motivational feedback to encourage consistency and improvement.

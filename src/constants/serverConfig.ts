@@ -9,9 +9,14 @@ export const STATUS_CODE = {
 };
 
 export const ROUTE = {
+  // Guest
   LANDING: '/',
+
+  // Auth
   LOGIN: '/login',
   SIGNUP: '/signup',
+
+  // Protected
   DASHBOARD: '/dashboard',
   BOARD_VIEW: '/board',
   CALENDAR_VIEW: '/calendar',

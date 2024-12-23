@@ -1,5 +1,5 @@
 declare module 'api' {
-  export interface IApi<T = void> {
+  export interface Api<T = void> {
     success: boolean;
     message: string;
     data?: T;

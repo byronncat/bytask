@@ -21,56 +21,23 @@ export default function ThemeSelection({
   const [open, setOpen] = useState(false);
   const { theme, setTheme, resolvedTheme } = useTheme();
 
-  const [isClient, setIsClient] = useState(false);
-
-  useEffect(() => {
-    setIsClient(true);
-  }, []);
-
   const options = [
     {
       label: 'Light',
       onClick: () => setTheme('light'),
-      icon: (
-        <FontAwesomeIcon
-          icon={faSunSolid}
-          className={clsx(
-            'size-4 mr-2',
-            'inline-block',
-            'text-on-foreground/[.6]',
-          )}
-        />
-      ),
+      icon: faSunSolid,
       active: theme === 'light',
     },
     {
       label: 'Dark',
       onClick: () => setTheme('dark'),
-      icon: (
-        <FontAwesomeIcon
-          icon={faMoonSolid}
-          className={clsx(
-            'size-4 mr-2',
-            'inline-block',
-            'text-on-foreground/[.6]',
-          )}
-        />
-      ),
+      icon: faMoonSolid,
       active: theme === 'dark',
     },
     {
       label: 'System',
       onClick: () => setTheme('system'),
-      icon: (
-        <FontAwesomeIcon
-          icon={faLaptop}
-          className={clsx(
-            'size-4 mr-2',
-            'inline-block',
-            'text-on-foreground/[.6]',
-          )}
-        />
-      ),
+      icon: faLaptop,
       active: theme === 'system',
     },
   ];
@@ -79,16 +46,20 @@ export default function ThemeSelection({
     setOpen(!open);
   }
 
+  const [isClient, setIsClient] = useState(false);
+  useEffect(() => {
+    setIsClient(true);
+  }, []);
+
   return (
     <div className={className}>
       <button
         className={clsx(
-          'size-8',
+          'size-8 rounded-full',
           'relative z-10',
-          'rounded-full',
           'transistion-colors duration-300',
           'flex items-center justify-center',
-          open ? 'bg-on-foreground/[.12]' : 'hover:bg-on-foreground/[.12]',
+          open ? 'bg-on-background/[.12]' : 'hover:bg-on-background/[.12]',
         )}
         onClick={toggleDropdown}
       >
@@ -96,12 +67,12 @@ export default function ThemeSelection({
           (resolvedTheme === 'dark' ? (
             <FontAwesomeIcon
               icon={theme === 'system' ? faMoonRegular : faMoonSolid}
-              className="size-6 text-on-foreground/[.8]"
+              className="size-6"
             />
           ) : (
             <FontAwesomeIcon
               icon={theme === 'system' ? faSunRegular : faSunSolid}
-              className="size-6 text-on-foreground/[.8]"
+              className="size-6"
             />
           ))}
       </button>
@@ -117,10 +88,10 @@ export default function ThemeSelection({
             className={clsx(
               'w-40 mr-5',
               'absolute top-14 right-0 z-10',
-              'shadow-xl overflow-hidden',
-              'bg-foreground rounded-md',
-              'font-semibold text-on-foreground/[.8]',
-              'border border-on-foreground/[.2] divide-y divide-on-foreground/[.1]',
+              'rounded-md shadow-xl',
+              'font-semibold',
+              'bg-background text-on-background/[.9]',
+              'border border-divider divide-y divide-divider',
             )}
           >
             {options.map(({ label, onClick, icon, active }) => (
@@ -132,7 +103,7 @@ export default function ThemeSelection({
                   'w-full px-4 py-2',
                   'flex items-center',
                   active
-                    ? 'text-on-foreground/[0.5] bg-on-surface/[0.12] animate-pulse'
+                    ? clsx('animate-pulse text-on-background dark:text-white')
                     : 'hover:bg-on-foreground/[0.08]',
                 )}
                 onClick={() => {
@@ -140,7 +111,12 @@ export default function ThemeSelection({
                   setOpen(false);
                 }}
               >
-                {isClient && icon}
+                {isClient && (
+                  <FontAwesomeIcon
+                    icon={icon}
+                    className={clsx('size-4 mr-2', 'inline-block')}
+                  />
+                )}
                 {label}
               </button>
             ))}

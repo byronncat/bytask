@@ -7,7 +7,7 @@ import { faPlus, faTrash } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 import { missionAction } from '@/api';
-import { ROUTE } from '@/constants/server';
+import { ROUTE } from '@/constants/serverConfig';
 import { Field } from '@/components';
 import type { IMission } from 'schema';
 

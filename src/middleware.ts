@@ -1,5 +1,5 @@
-import { corsMiddleware, authorizationMiddleware } from './middlewares';
 import type { NextRequest } from 'next/server';
+import { corsMiddleware, authorizationMiddleware } from './middlewares';
 
 export async function middleware(request: NextRequest) {
   if (request.nextUrl.pathname.startsWith('/api'))

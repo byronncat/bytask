@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { cookies } from 'next/headers';
 import session from '@/libraries/session';
-import { ROUTE } from '@/constants/server';
+import { ROUTE } from '@/constants/serverConfig';
 import type { SessionPayload } from 'api';
 
 const publicRoutes = [ROUTE.LANDING];

@@ -1,14 +1,16 @@
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
+import { getUser } from '@/helpers';
+import { STATUS_CODE } from '@/constants/serverConfig';
 
-const allowedOrigins = ['http://192.168.1.11:3000', 'http://localhost:3000'];
+const allowedOrigins = ['http://192.168.1.13:3000', 'http://localhost:3000'];
 
 const corsOptions = {
   'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
   'Access-Control-Allow-Headers': 'Content-Type, Authorization',
 };
 
-export function corsMiddleware(request: NextRequest) {
+export async function corsMiddleware(request: NextRequest) {
   const origin = request.headers.get('origin') ?? '';
   const isAllowedOrigin = allowedOrigins.includes(origin);
 
@@ -29,11 +31,6 @@ export function corsMiddleware(request: NextRequest) {
   if (isAllowedOrigin) {
     response.headers.set('Access-Control-Allow-Origin', origin);
   }
-
-  // Preflighted requests
-  // Object.entries(corsOptions).forEach(([key, value]) => {
-  //   response.headers.set(key, value);
-  // });
 
   return response;
 }

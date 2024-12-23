@@ -20,6 +20,7 @@ export default function NavigationText({
       <Link
         href={path}
         className={clsx(
+          'text-primary',
           'font-semibold capitalize',
           'hover:opacity-60 transition-opacity duration-300',
         )}

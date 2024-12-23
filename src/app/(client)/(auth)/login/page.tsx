@@ -1,12 +1,14 @@
 'use client';
 
+import type { LoginFormData } from '@/constants/form';
+
 import clsx from 'clsx';
 import { authAction } from '@/api';
 import { toast } from '@/libraries/toast';
 import { useAuth } from '@/providers';
 import { Form, Divider, NavigationText } from '@/components';
 import { LOGIN_FORM } from '@/constants/form';
-import type { LoginFormData } from '@/constants/form';
+import { ROUTE } from '@/constants/serverConfig';
 
 export default function LoginPage() {
   const { login } = useAuth();
@@ -29,7 +31,7 @@ export default function LoginPage() {
       <Divider className={clsx('mb-3 mt-5', 'text-xs uppercase')} text="or" />
       <NavigationText
         text="Don't have an account?"
-        path="/signup"
+        path={ROUTE.SIGNUP}
         hyperlink="Sign up"
         className={clsx('w-full', 'text-center', 'opacity-80')}
       />

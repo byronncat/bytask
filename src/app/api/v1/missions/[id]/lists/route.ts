@@ -1,7 +1,9 @@
+import type { NextRequest } from 'next/server';
 import { getUser } from '@/helpers';
 import { STATUS_CODE } from '@/constants/serverConfig';
+import { TaskListModel } from '@/database';
 
-export async function GET() {
+export async function GET(request: NextRequest) {
   try {
     const user = await getUser();
     if (!user) {
@@ -13,16 +15,22 @@ export async function GET() {
       });
     }
 
-    return new Response(JSON.stringify(user), {
+    const missionId = request.nextUrl.pathname.split('/')[4];
+    const lists = await TaskListModel.find({
+      mission_id: missionId,
+    });
+
+    return new Response(JSON.stringify(lists), {
       status: STATUS_CODE.OK,
       headers: {
         'Content-Type': 'application/json',
       },
     });
   } catch (error) {
-    const message = typeof error === 'string' ? error : 'Internal server error';
-    console.error('[Error]:', message);
-    return new Response(JSON.stringify(message), {
+    console.error('[Error]:', error);
+    const errorMessage =
+      typeof error === 'string' ? error : 'Internal server error';
+    return new Response(JSON.stringify(errorMessage), {
       status: STATUS_CODE.INTERNAL_SERVER_ERROR,
       headers: {
         'Content-Type': 'application/json',

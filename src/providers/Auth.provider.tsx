@@ -1,5 +1,7 @@
 'use client';
 
+import type { User } from 'schema';
+
 import { useRouter } from 'next/navigation';
 import {
   createContext,
@@ -9,12 +11,11 @@ import {
   useEffect,
 } from 'react';
 import { authAction } from '@/api';
-import { ROUTE } from '@/constants/server';
-import type { IUser } from 'schema';
+import { ROUTE } from '@/constants/serverConfig';
 
 const AuthContext = createContext(
   {} as {
-    user?: IUser;
+    user?: User;
     login: () => void;
     logout: () => void;
   },
@@ -25,7 +26,7 @@ export default function AuthenticationProvider({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
   const router = useRouter();
-  const [user, setUser] = useState<IUser>();
+  const [user, setUser] = useState<User>();
 
   const fetchUser = useCallback(async () => {
     const { success, data } = await authAction.authenticate();

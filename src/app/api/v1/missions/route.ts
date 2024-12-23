@@ -1,6 +1,6 @@
 import { MissionModel } from '@/database';
 import { getUser } from '@/helpers';
-import { STATUS_CODE } from '@/constants/server';
+import { STATUS_CODE } from '@/constants/serverConfig';
 import { FILTER_BY, SORT_BY } from '@/constants/taskMetadata';
 
 import type { NextRequest } from 'next/server';
