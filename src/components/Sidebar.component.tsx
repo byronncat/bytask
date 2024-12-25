@@ -2,7 +2,7 @@
 
 import Image from 'next/image';
 import Link from 'next/link';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import clsx from 'clsx';
 import {
   faChevronLeft,
@@ -13,20 +13,39 @@ import {
   faHouse,
   faChartSimple,
   faRightFromBracket,
+  faUser,
+  faThumbTack,
 } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
-import { useAuth } from '@/providers';
+import { useAuth, useGlobal } from '@/providers';
 import { Divider } from '@/components';
 import { ROUTE } from '@/constants/serverConfig';
 import workSpace from '@/assets/images/workspace-icon.webp';
 import type { IconProp } from '@fortawesome/fontawesome-svg-core';
+import { Mission } from 'schema';
+import { missionAction } from '@/api';
 
 export default function Sidebar({
   className,
 }: Readonly<{ className: string }>) {
   const [minimized, setMinimized] = useState(false);
+  const [fetching, setFetching] = useState(true);
+  const [missions, setMissions] = useState<Mission[] | null>();
   const { user, logout } = useAuth();
+  const { reloadTrigger } = useGlobal();
+
+  async function fetchMissions() {
+    setFetching(true);
+    const { success, data } = await missionAction.getMany();
+    if (success) setMissions(data);
+    else setMissions(null);
+    setFetching(false);
+  }
+
+  useEffect(() => {
+    fetchMissions();
+  }, [reloadTrigger]);
 
   return (
     <div
@@ -34,12 +53,12 @@ export default function Sidebar({
         className,
         'flex flex-col',
         'group box-content',
-        'bg-foreground/[.7] backdrop-blur',
-        'border-r border-border',
-        'transition-[width] duration-300',
+        'backdrop-blur',
+        'border-r border-divider',
+        'transition-[width] duration-200',
         minimized
-          ? 'w-4 cursor-pointer hover:bg-foreground'
-          : 'w-64 overflow-y-auto',
+          ? 'w-4 cursor-pointer hover:bg-background bg-background/[.9]'
+          : 'w-64 overflow-y-auto bg-background/[.8]',
       )}
       onClick={minimized ? () => setMinimized(false) : undefined}
     >
@@ -62,7 +81,7 @@ export default function Sidebar({
             />
             <h1
               className={clsx(
-                'text-on-foreground font-semibold',
+                'font-semibold',
                 'w-36 text-ellipsis overflow-hidden',
               )}
             >
@@ -80,13 +99,19 @@ export default function Sidebar({
         <>
           <Divider className="w-full" />
 
-          <div className={clsx('grow', 'text-sm', 'pt-3 pb-2 space-y-3')}>
+          <div className={clsx('grow', 'text-sm', 'pt-3 pb-2', 'space-y-3')}>
             <ul>
               <ListItem
                 type="icon"
                 data={faHouse}
                 text="Dashboard"
                 href={ROUTE.DASHBOARD}
+              />
+              <ListItem
+                type="icon"
+                data={faUser}
+                text="Profile"
+                href={ROUTE.PROFILE}
               />
               <ListItem
                 type="icon"
@@ -120,15 +145,20 @@ export default function Sidebar({
             <div className="w-full">
               <Heading>Missions</Heading>
               <ul className="pt-1">
-                <ListItem
-                  type="image"
-                  data={{
-                    src: '',
-                    alt: 'Workspace',
-                  }}
-                  text="Music App"
-                  href={ROUTE.BOARD_VIEW}
-                />
+                {fetching
+                  ? Array.from({ length: 7 }).map((_, index) => (
+                      <MissionSkeleton key={index} />
+                    ))
+                  : missions?.map((mission) => (
+                      <ListItem
+                        key={mission.id}
+                        type="icon"
+                        data={faThumbTack}
+                        iconClassName="rotate-45"
+                        text={mission.title}
+                        href={`${ROUTE.BOARD_VIEW}/${mission.id}`}
+                      />
+                    ))}
               </ul>
             </div>
           </div>
@@ -155,9 +185,9 @@ function Heading({ children }: Readonly<{ children: React.ReactNode }>) {
     <div className="pl-3 py-1">
       <h2
         className={clsx(
-          'font-semibold whitespace-nowrap',
           'h-6',
           'flex items-center',
+          'font-semibold whitespace-nowrap',
         )}
       >
         {children}
@@ -171,9 +201,10 @@ interface ListItemProps {
   text?: string;
   textItalic?: boolean;
   type: 'icon' | 'image' | 'text-only';
-  data: NextImage | IconProp;
+  data?: NextImage | IconProp;
   href?: string;
   className?: string;
+  iconClassName?: string;
   onClick?: () => void;
 }
 
@@ -185,6 +216,7 @@ function ListItem({
   text = '',
   href,
   className,
+  iconClassName,
   onClick,
 }: Readonly<ListItemProps>) {
   const Item = (
@@ -193,20 +225,20 @@ function ListItem({
         'h-8 px-3',
         'flex items-center',
         'cursor-pointer',
-        'hover:bg-on-foreground/[.1]',
+        'hover:bg-on-background/[.12]',
         className,
       )}
     >
       {type === 'icon' ? (
         <div className={clsx('flex justify-center', 'w-5 mr-2')}>
-          <FontAwesomeIcon icon={data as IconProp} />
+          <FontAwesomeIcon icon={data as IconProp} className={iconClassName} />
         </div>
       ) : type === 'image' ? (
         <div
           className={clsx(
+            'relative',
             'w-6 h-5 mr-2',
             'rounded overflow-hidden',
-            'relative',
           )}
         >
           <Image
@@ -247,8 +279,8 @@ function ToggleMinimizedButton({
       type="button"
       className={clsx(
         'absolute top-1/2 transform -translate-y-1/2',
-        'bg-foreground box-content',
-        'border-on-foreground/[.2]',
+        'bg-background box-content',
+        'border-divider',
         'cursor-pointer overflow-hidden',
         minimized
           ? 'size-6 rounded-full border-2 -right-4'
@@ -259,18 +291,33 @@ function ToggleMinimizedButton({
         className={clsx(
           'size-full',
           'flex items-center justify-center',
-          'hover:bg-on-foreground/[.1]',
-          minimized
-            ? 'group-hover:bg-on-foreground/[.1]'
-            : 'bg-on-foreground/[.03]',
+          'hover:bg-on-background/[.12]',
+          minimized && 'group-hover:bg-on-background/[.12]',
         )}
         onClick={onClick}
       >
         <FontAwesomeIcon
           icon={minimized ? faChevronRight : faChevronLeft}
-          className="text-on-foreground size-3"
+          className="text-on-background size-3"
         />
       </div>
     </button>
+  );
+}
+
+function MissionSkeleton() {
+  return (
+    <div
+      className={clsx('pl-3 h-8 w-full', 'animate-pulse', 'flex items-center')}
+    >
+      <div
+        className={clsx(
+          'h-3 w-1/2',
+          'flex items-center',
+          'bg-surface-1',
+          'rounded',
+        )}
+      ></div>
+    </div>
   );
 }

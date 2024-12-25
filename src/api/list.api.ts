@@ -1,14 +1,14 @@
 'use client';
 
 import type { Api } from 'api';
-import { IMission, ITaskList } from 'schema';
+import { Mission, ITaskList } from 'schema';
 
 const serverHost = process.env.NEXT_PUBLIC_DOMAIN;
 if (!serverHost) throw Error('Server Host is not defined');
 
 const apiUrl = {
   createList: `${serverHost}/v1/lists`,
-  getListByMission: (missionId: IMission['id']) =>
+  getListByMission: (missionId: Mission['id']) =>
     `${serverHost}/v1/missions/${missionId}/lists`,
   updateList: `${serverHost}/v1/lists`,
   deleteList: `${serverHost}/v1/lists`,
@@ -43,7 +43,7 @@ export async function create(
 }
 
 export async function getListByMission(
-  missionId: IMission['id'],
+  missionId: Mission['id'],
 ): Promise<Api<ITaskList[]>> {
   return await fetch(apiUrl.getListByMission(missionId))
     .then(async (res) => {

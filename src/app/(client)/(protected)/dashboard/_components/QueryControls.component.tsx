@@ -1,7 +1,9 @@
-import clsx from 'clsx';
 import { useEffect, useRef, useState } from 'react';
 import { useDebouncedCallback } from 'use-debounce';
+import clsx from 'clsx';
+
 import { FILTER_BY, SORT_BY, SORT_ORDER } from '@/constants/taskMetadata';
+import { useMission } from '@/providers';
 
 type Selection = Record<
   string,
@@ -23,11 +25,9 @@ export type Option = {
   };
 };
 
-export default function QueryControls({
-  fetchMissions,
-}: Readonly<{
-  fetchMissions: (query: Option['query']) => Promise<boolean>;
-}>) {
+export default function QueryControls() {
+  const { fetchMissions } = useMission();
+
   const [selections, setSelectedOptions] = useState<Selection>({
     'Sort by': {
       show: false,
@@ -84,7 +84,7 @@ export default function QueryControls({
       if (allClosed) return;
 
       let clickedInside = false;
-      dropdownRefs.current.forEach((ref, key) => {
+      dropdownRefs.current.forEach((ref) => {
         if (ref && ref.contains(event.target as Node)) {
           clickedInside = true;
         }
@@ -166,12 +166,12 @@ export default function QueryControls({
             const Selection = ({ name }: Readonly<{ name?: string }>) => (
               <div
                 className={clsx(
+                  'rounded',
                   'w-48 h-10 px-3',
                   'flex items-center justify-between',
                   'text-sm capitalize',
-                  'bg-foreground text-on-foreground',
-                  'rounded',
-                  'border-[1px] border-border',
+                  'bg-surface-1 text-on-surface-1',
+                  'border border-divider',
                   'cursor-pointer',
                 )}
                 onClick={async () => {
@@ -196,8 +196,8 @@ export default function QueryControls({
                 className={clsx(
                   'absolute top-full mt-1',
                   'w-48 z-10 py-2',
-                  'bg-foreground text-on-foreground',
-                  'border border-border',
+                  'bg-surface-1 text-on-surface-1',
+                  'border border-divider',
                   'rounded shadow',
                   setting.show ? 'block' : 'hidden',
                 )}
@@ -210,8 +210,8 @@ export default function QueryControls({
                       'text-sm capitalize',
                       'cursor-pointer',
                       option.selected
-                        ? 'bg-on-foreground/[.12] border-l-2 border-contrast/[.7]'
-                        : 'hover:bg-on-foreground/[.07]',
+                        ? 'bg-primary/[.12] border-l-2 border-primary text-primary font-semibold'
+                        : 'hover:bg-on-surface-1/[.07]',
                     )}
                     onClick={() => {
                       selectHandler(selectionName, option.id);
@@ -254,10 +254,10 @@ export default function QueryControls({
             className={clsx(
               'block',
               'w-60 h-10 px-3',
-              'bg-foreground text-on-foreground',
+              'bg-surface-1 text-on-surface-1',
               'rounded',
               'text-sm',
-              'border-[1px] border-border',
+              'border border-divider',
               'focus:outline-none focus:border-contrast',
             )}
             type="text"

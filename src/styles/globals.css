@@ -8,10 +8,9 @@
     --on-background: 23 43 77;
     --primary: 14 165 233;
     --on-primary: 255 255 255;
-
     --surface-1: 241 242 244;
-    --surface-2: 255 255 255;
     --on-surface-1: 23 43 77;
+    --surface-2: 255 255 255;
     --on-surface-2: 23 43 77;
     --divider: rgba(0, 0, 0, 0.1);
   }
@@ -21,10 +20,9 @@
     --on-background: 182 194 207;
     --primary: 56 189 248;
     --on-primary: 0 0 0;
-
-    --surface-1: 26 26 26;
+    --surface-1: 40 46 51;
+    --on-surface-1: 226 229 233;
     --surface-2: 34 39 43;
-    --on-surface-1: 182 194 207;
     --on-surface-2: 182 194 207;
     --divider: rgba(255, 255, 255, 0.2);
   }

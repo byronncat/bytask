@@ -1,7 +1,7 @@
 import type { Metadata } from 'next';
 
 import { ThemeProvider } from 'next-themes';
-import { AuthProvider } from '@/providers';
+import { AuthProvider, GlobalProvider } from '@/providers';
 import { ToastProvider } from '@/libraries/toast';
 import font from '@/assets/fonts';
 
@@ -24,11 +24,13 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <body className={`${font.inter.className} antialiased`}>
-        <AuthProvider>
-          <ThemeProvider>
-            <ToastProvider>{children}</ToastProvider>
-          </ThemeProvider>
-        </AuthProvider>
+        <GlobalProvider>
+          <AuthProvider>
+            <ThemeProvider>
+              <ToastProvider>{children}</ToastProvider>
+            </ThemeProvider>
+          </AuthProvider>
+        </GlobalProvider>
       </body>
     </html>
   );

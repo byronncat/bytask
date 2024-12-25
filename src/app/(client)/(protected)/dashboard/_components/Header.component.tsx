@@ -10,7 +10,7 @@ export default function Header() {
           width={60}
           height={60}
           src={workspaceIcon.src}
-          alt="Workspace Icon"
+          alt="workspace-icon"
         />
       </div>
       <h1 className={clsx('text-xl font-semibold', 'ml-4')}>Workspace</h1>

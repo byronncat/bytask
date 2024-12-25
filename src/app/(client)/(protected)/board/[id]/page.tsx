@@ -11,7 +11,7 @@ import {
 } from '@fortawesome/free-solid-svg-icons';
 import { faStar } from '@fortawesome/free-regular-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import type { IMission, ITask, ITaskList } from 'schema';
+import type { Mission, ITask, ITaskList } from 'schema';
 import { listAction, missionAction, taskAction } from '@/api';
 import { usePathname } from 'next/navigation';
 import { useForm } from 'react-hook-form';
@@ -19,7 +19,7 @@ import { Field } from '@/components';
 
 export default function BoardViewPage() {
   const [lists, setLists] = useState<ITaskList[]>();
-  const [mission, setMission] = useState<IMission>();
+  const [mission, setMission] = useState<Mission>();
   const pathname = usePathname();
 
   useEffect(() => {

@@ -2,7 +2,7 @@
 
 import { FILTER_BY, SORT_BY, SORT_ORDER } from '@/constants/taskMetadata';
 import type { Api } from 'api';
-import { IMission } from 'schema';
+import { Mission } from 'schema';
 
 const serverHost = process.env.NEXT_PUBLIC_DOMAIN;
 if (!serverHost) throw Error('Server Host is not defined');
@@ -10,13 +10,13 @@ if (!serverHost) throw Error('Server Host is not defined');
 const apiUrl = {
   createMission: `${serverHost}/v1/missions`,
   getMissions: `${serverHost}/v1/missions`,
-  getOneMission: (id: IMission['id']) => `${serverHost}/v1/missions/${id}`,
+  getOneMission: (id: Mission['id']) => `${serverHost}/v1/missions/${id}`,
   deleteMission: `${serverHost}/v1/missions`,
 };
 
 export async function create(
-  data: Pick<IMission, 'title'>,
-): Promise<Api<IMission['id']>> {
+  data: Pick<Mission, 'title'>,
+): Promise<Api<Mission['id']>> {
   return await fetch(apiUrl.createMission, {
     method: 'POST',
     headers: {
@@ -54,7 +54,7 @@ export async function getMany(
     sortBy: SORT_BY.ACTIVED_AT,
     sortOrder: SORT_ORDER.DESC,
   },
-): Promise<Api<IMission[]>> {
+): Promise<Api<Mission[]>> {
   return await fetch(
     `${apiUrl.getMissions}?sortBy=${sortBy}&sortOrder=${sortOrder}${
       filterBy ? '&filterBy=' + filterBy : ''
@@ -78,7 +78,7 @@ export async function getMany(
     });
 }
 
-export async function getOne(id: IMission['id']): Promise<Api<IMission>> {
+export async function getOne(id: Mission['id']): Promise<Api<Mission>> {
   return await fetch(apiUrl.getOneMission(id))
     .then(async (res) => {
       const data = await res.json();

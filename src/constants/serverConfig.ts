@@ -18,6 +18,7 @@ export const ROUTE = {
 
   // Protected
   DASHBOARD: '/dashboard',
+  PROFILE: '/profile',
   BOARD_VIEW: '/board',
   CALENDAR_VIEW: '/calendar',
   TALBE_VIEW: '/table',

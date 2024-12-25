@@ -11,7 +11,7 @@ declare module 'schema' {
     profile_photo?: Image;
   };
 
-  export type IMission = {
+  export type Mission = {
     readonly id: string;
     user_id: User['id'];
     title: string;
@@ -25,13 +25,13 @@ declare module 'schema' {
   export type ITaskList = {
     readonly id: string;
     title: string;
-    mission_id: IMission['id'];
+    mission_id: Mission['id'];
   };
 
   export type ITask = {
     readonly id: string;
     title: string;
-    mission_id: IMission['id'];
+    mission_id: Mission['id'];
     list_id: ITaskList['id'];
     description?: string;
     label?: ILabel['id'];

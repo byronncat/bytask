@@ -1,7 +1,7 @@
 import mongoose from 'mongoose';
 import { v4 as uuidv4 } from 'uuid';
 import type { Document, Types } from 'mongoose';
-import type { ILabel, IMission, ITask, ITaskList, User } from 'schema';
+import type { ILabel, Mission, ITask, ITaskList, User } from 'schema';
 import { STATUS } from '@/constants/taskMetadata';
 
 interface UserDocument extends User, Document {
@@ -30,10 +30,10 @@ const LabelSchema = new mongoose.Schema<LabelDocument>({
   color: { type: String, required: true },
 });
 
-interface MissionDocument extends IMission, Document {
-  id: IMission['id'];
+interface MissionDocument extends Mission, Document {
+  id: Mission['id'];
   labels: Types.DocumentArray<LabelDocument>;
-  _doc?: IMission;
+  _doc?: Mission;
 }
 
 const MissionSchema = new mongoose.Schema<MissionDocument>({

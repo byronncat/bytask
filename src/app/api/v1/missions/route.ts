@@ -4,7 +4,7 @@ import { STATUS_CODE } from '@/constants/serverConfig';
 import { FILTER_BY, SORT_BY } from '@/constants/taskMetadata';
 
 import type { NextRequest } from 'next/server';
-import type { IMission } from 'schema';
+import type { Mission } from 'schema';
 
 export async function POST(request: NextRequest) {
   try {
@@ -61,13 +61,13 @@ export async function GET(request: NextRequest) {
       });
     }
 
-    const sortQuery: Partial<Record<keyof IMission, 1 | -1>> = {};
+    const sortQuery: Partial<Record<keyof Mission, 1 | -1>> = {};
     if (sortBy === SORT_BY.TITLE)
       sortQuery.title = sortOrder === 'asc' ? 1 : -1;
     if (sortBy === SORT_BY.ACTIVED_AT)
       sortQuery.actived_at = sortOrder === 'asc' ? 1 : -1;
 
-    const filterQuery: Partial<Record<keyof IMission, number>> = {};
+    const filterQuery: Partial<Record<keyof Mission, number>> = {};
     if (filterBy) {
       filterQuery.status = Object.values(FILTER_BY).indexOf(filterBy);
     }

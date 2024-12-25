@@ -8,8 +8,8 @@ export default function Layout({
 }: Readonly<{ children: React.ReactNode }>) {
   return (
     <div className="w-screen h-screen">
-      <Header className={clsx('h-12 px-4', 'bg-foreground')} />
-      <div className={clsx('h-[calc(100vh-3rem)]', 'flex')}>
+      <Header className="py-2 px-4" />
+      <div className={clsx('h-[calc(100vh-3rem-1px)]', 'flex')}>
         <Sidebar className={clsx('h-full', 'flex-shrink-0', 'relative z-10')} />
         <main className="flex-grow relative">{children}</main>
       </div>
@@ -24,10 +24,10 @@ function Header({ className }: Readonly<{ className?: string }>) {
         className,
         'w-full',
         'flex items-center justify-between',
-        'border-b border-border',
+        'border-b border-divider',
       )}
     >
-      <Brand />
+      <Brand className="h-8" />
       <ThemeSelection />
     </div>
   );
