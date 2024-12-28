@@ -1,17 +1,17 @@
 'use client';
 
 import type { Api } from 'api';
+import type { User } from 'schema';
 import type { LoginFormData, SignupFormData } from '@/constants/form';
-import { User } from 'schema';
-
-const serverHost = process.env.NEXT_PUBLIC_DOMAIN;
-if (!serverHost) throw Error('Server Host is not defined');
+import { SERVER_API } from '@/constants/serverConfig';
 
 const apiUrl = {
-  login: `${serverHost}/v1/auth/login`,
-  signup: `${serverHost}/v1/auth/signup`,
-  logout: `${serverHost}/v1/auth/logout`,
-  authenticate: `${serverHost}/v1/auth/authenticate`,
+  login: `${SERVER_API}/v1/auth/login`,
+  signup: `${SERVER_API}/v1/auth/signup`,
+  logout: `${SERVER_API}/v1/auth/logout`,
+  authenticate: `${SERVER_API}/v1/auth/authenticate`,
+  forgotPassword: `${SERVER_API}/v1/auth/forgot-password`,
+  resetPassword: `${SERVER_API}/v1/users?type=reset-password`,
 };
 
 export async function login(data: LoginFormData): Promise<Api> {
@@ -102,6 +102,58 @@ export async function authenticate(): Promise<Api<User>> {
       };
     })
     .catch(async (error: string) => {
+      return {
+        success: false,
+        message: error,
+      };
+    });
+}
+
+export async function forgotPassword(email: User['email']): Promise<Api> {
+  return await fetch(apiUrl.forgotPassword, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({ email }),
+  })
+    .then(async (res) => {
+      const response = (await res.json()) as Api['message'];
+      if (!res.ok) throw response;
+      return {
+        success: true,
+        message: response,
+      };
+    })
+    .catch((error: string) => {
+      return {
+        success: false,
+        message: error,
+      };
+    });
+}
+
+export async function resetPassword(
+  token: string,
+  password: string,
+): Promise<Api> {
+  return await fetch(apiUrl.resetPassword, {
+    method: 'PUT',
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${token}`,
+    },
+    body: JSON.stringify({ newPassword: password }),
+  })
+    .then(async (res) => {
+      const response = (await res.json()) as Api['message'];
+      if (!res.ok) throw response;
+      return {
+        success: true,
+        message: response,
+      };
+    })
+    .catch((error: string) => {
       return {
         success: false,
         message: error,

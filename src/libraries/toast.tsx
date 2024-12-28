@@ -19,7 +19,7 @@ export function ToastProvider({ children }: { children: React.ReactNode }) {
   return (
     <>
       {children}
-      <ToastContainer theme="colored" />
+      <ToastContainer theme="colored" hideProgressBar />
     </>
   );
 }

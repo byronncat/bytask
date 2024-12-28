@@ -15,14 +15,14 @@ export default function NavigationText({
   className,
 }: Readonly<NavigationTextProps>) {
   return (
-    <p className={className}>
+    <p className={clsx(className, 'text-on-background/[.7]')}>
       {`${text} `}
       <Link
         href={path}
         className={clsx(
           'text-primary',
           'font-semibold capitalize',
-          'hover:opacity-60 transition-opacity duration-300',
+          'hover:opacity-60 transition-opacity duration-200',
         )}
       >
         {hyperlink}

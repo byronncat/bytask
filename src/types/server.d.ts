@@ -1,4 +1,6 @@
 declare module 'api' {
+  import type { User } from 'schema';
+
   export interface Api<T = void> {
     success: boolean;
     message: string;
@@ -6,7 +8,9 @@ declare module 'api' {
   }
 
   export type SessionPayload = {
-    userId: string;
-    expiresAt: Date;
+    id: User['id'];
+    name: User['username'];
+    email: User['email'];
+    type: 'credentials' | 'google';
   };
 }

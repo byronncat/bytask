@@ -1,11 +1,12 @@
 import type { NextRequest } from 'next/server';
-import { corsMiddleware, authorizationMiddleware } from './middlewares';
+import { NextResponse } from 'next/server';
+import { corsMiddleware } from './middlewares';
 
 export async function middleware(request: NextRequest) {
   if (request.nextUrl.pathname.startsWith('/api'))
     return corsMiddleware(request);
 
-  return authorizationMiddleware(request);
+  return NextResponse.next();
 }
 
 export const config = {

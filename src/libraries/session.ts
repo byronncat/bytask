@@ -1,26 +1,30 @@
+import type { SessionPayload } from 'api';
 import { cookies } from 'next/headers';
 import { SignJWT, jwtVerify } from 'jose';
-import type { SessionPayload } from 'api';
+import { ENCODED_KEY } from '@/constants/serverConfig';
 
-const secretKey = process.env.SESSION_SECRET || 'secret';
-const encodedKey = new TextEncoder().encode(secretKey);
+type JWTSessionPayload = {
+  id: SessionPayload['id'];
+  expiresAt: Date;
+};
 
-async function encrypt(payload: SessionPayload) {
+async function encrypt(payload: JWTSessionPayload) {
   return new SignJWT(payload)
     .setProtectedHeader({ alg: 'HS256' })
     .setIssuedAt()
     .setExpirationTime(payload.expiresAt.getTime())
-    .sign(encodedKey);
+    .sign(ENCODED_KEY);
 }
 
 async function decrypt(session: string | undefined = '') {
   if (!session) return null;
   try {
-    const { payload } = await jwtVerify(session, encodedKey, {
+    const { payload } = await jwtVerify(session, ENCODED_KEY, {
       algorithms: ['HS256'],
     });
     return payload;
   } catch (error) {
+    console.error('[Session]', '- Failed to decrypt session', error);
     return null;
   }
 }
@@ -31,7 +35,7 @@ async function create(userId: string) {
     const expiresAt = new Date(Date.now() + expiresDays);
 
     const session = await encrypt({
-      userId,
+      id: userId,
       expiresAt,
     });
 
@@ -44,6 +48,7 @@ async function create(userId: string) {
       path: '/',
     });
   } catch (error) {
+    console.error('[Session]', '- Failed to create session', error);
     throw 'Failed to create session';
   }
 }

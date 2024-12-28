@@ -3,20 +3,18 @@
 import type { SignupFormData } from '@/constants/form';
 
 import clsx from 'clsx';
-import { authAction } from '@/api';
+import { authAction_v1 } from '@/api';
+import { Form, Divider } from '@/components';
+import { NavigationText, GoogleButton } from '../_components';
 import { toast } from '@/libraries/toast';
-import { useAuth } from '@/providers';
-import { Form, Divider, NavigationText } from '@/components';
 import { SIGNUP_FORM } from '@/constants/form';
 import { ROUTE } from '@/constants/serverConfig';
 
 export default function SignupPage() {
-  const { login } = useAuth();
-
-  async function handleSignup(data: SignupFormData) {
-    const { success, message } = await authAction.signup(data);
+  async function signupHandler(data: SignupFormData) {
+    const { success, message } = await authAction_v1.signup(data);
     if (success) {
-      login();
+      toast.success(message);
     } else toast.error(message);
   }
 
@@ -25,15 +23,16 @@ export default function SignupPage() {
       <Form
         formData={SIGNUP_FORM}
         className="w-full"
-        submitText="sign up"
-        onSubmit={handleSignup}
+        submitText="Sign up"
+        onSubmit={signupHandler}
       />
-      <Divider className={clsx('mb-3 mt-5', 'text-xs uppercase')} text="or" />
+      <Divider className={clsx('my-3', 'text-xs uppercase')} text="or" />
+      <GoogleButton />
       <NavigationText
         text="Already have an account?"
         path={ROUTE.LOGIN}
         hyperlink="Log in"
-        className={clsx('w-full', 'text-center', 'opacity-80')}
+        className={clsx('w-full mt-6', 'text-center')}
       />
     </>
   );

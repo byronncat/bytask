@@ -15,7 +15,7 @@ import type { Mission, ITask, ITaskList } from 'schema';
 import { listAction, missionAction, taskAction } from '@/api';
 import { usePathname } from 'next/navigation';
 import { useForm } from 'react-hook-form';
-import { Field } from '@/components';
+// import { Field } from '@/components';
 
 export default function BoardViewPage() {
   const [lists, setLists] = useState<ITaskList[]>();
@@ -23,7 +23,7 @@ export default function BoardViewPage() {
   const pathname = usePathname();
 
   useEffect(() => {
-    const missionId = pathname.split('/').pop() || '';
+    const missionId = pathname?.split('/').pop() || '';
     async function fetchMission() {
       if (!missionId) return;
       const { success, data } = await missionAction.getOne(missionId);
@@ -195,7 +195,10 @@ function List({
 }: Readonly<ListProps>) {
   const [tasks, setTasks] = useState<any[]>([]);
   const [showModal, setShowModal] = useState(false);
-  const { register, handleSubmit } = useForm<Pick<ITask, 'title'>>();
+  const {
+    //  register,
+    handleSubmit,
+  } = useForm<Pick<ITask, 'title'>>();
 
   async function taskHandler(data: Pick<ITask, 'title'>) {
     console.log(data);
@@ -237,7 +240,7 @@ function List({
           onSubmit={handleSubmit(taskHandler)}
           className="flex mt-4 bg-white flex-col px-2"
         >
-          <Field
+          {/* <Field
             id="title"
             key="title"
             type="text"
@@ -246,7 +249,7 @@ function List({
             validation={{
               required: 'Title is required',
             }}
-          />
+          /> */}
 
           <div className="flex items-center space-x-2 ">
             <button
@@ -322,7 +325,10 @@ interface AddListModalProps {
 
 function AddListModal({ onCreate, className }: Readonly<AddListModalProps>) {
   const [isCreating, setIsCreating] = useState(false);
-  const { register, handleSubmit } = useForm<Pick<ITaskList, 'title'>>();
+  const {
+    //  register,
+    handleSubmit,
+  } = useForm<Pick<ITaskList, 'title'>>();
 
   async function createList(data: Pick<ITaskList, 'title'>) {
     onCreate(data);
@@ -357,7 +363,7 @@ function AddListModal({ onCreate, className }: Readonly<AddListModalProps>) {
         className,
       )}
     >
-      <Field
+      {/* <Field
         id="title"
         key="title"
         type="text"
@@ -366,7 +372,7 @@ function AddListModal({ onCreate, className }: Readonly<AddListModalProps>) {
         validation={{
           required: 'Title is required',
         }}
-      />
+      /> */}
       <div className="flex items-center mt-4 space-x-2">
         <button
           type="submit"

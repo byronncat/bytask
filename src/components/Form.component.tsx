@@ -1,11 +1,5 @@
 'use client';
 
-import { useState } from 'react';
-import { useForm } from 'react-hook-form';
-import clsx from 'clsx';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faEye, faEyeSlash } from '@fortawesome/free-solid-svg-icons';
-
 import type {
   FieldValues,
   FieldError,
@@ -16,11 +10,22 @@ import type {
 } from 'react-hook-form';
 import type { IForm, IField } from 'form';
 
+import Link from 'next/link';
+import { useState } from 'react';
+import { useForm } from 'react-hook-form';
+import clsx from 'clsx';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faEye, faEyeSlash } from '@fortawesome/free-solid-svg-icons';
+
 interface FormProps<T extends FieldValues> {
   formData: IForm<T>;
   onSubmit: (data: T) => void;
   className?: string;
   submitText?: string;
+  redirectLink?: {
+    href: string;
+    text: string;
+  };
 }
 
 export default function Form<T extends FieldValues>({
@@ -28,6 +33,7 @@ export default function Form<T extends FieldValues>({
   onSubmit,
   className,
   submitText = 'submit',
+  redirectLink,
 }: Readonly<FormProps<T>>) {
   const defaultValues = formData.fields.reduce((acc, field) => {
     acc[field.id] = field.defaultValue ?? '';
@@ -54,7 +60,7 @@ export default function Form<T extends FieldValues>({
 
   return (
     <form onSubmit={submitHandler} className={clsx(className)}>
-      <div className="space-y-3">
+      <div className="space-y-2">
         {formData.fields.map((field) => (
           <Field
             key={field.id}
@@ -69,19 +75,32 @@ export default function Form<T extends FieldValues>({
         ))}
       </div>
 
+      {redirectLink && (
+        <Link
+          href={redirectLink.href}
+          className={clsx(
+            'mt-4 block',
+            'text-primary text-sm text-right font-semibold',
+            'hover:opacity-60 transition-opacity duration-200',
+          )}
+        >
+          {redirectLink.text}
+        </Link>
+      )}
       <button
         type="submit"
         className={clsx(
           'block',
           'w-full h-10',
-          'mt-8',
-          'font-medium capitalize',
+          redirectLink ? 'mt-3' : 'mt-6',
+          'font-medium',
           'border border-primary',
           'rounded-md focus:outline-none',
           'bg-background text-primary',
           'disabled:opacity-60',
           !isFetching ? 'hover:bg-primary hover:text-background' : 'pr-6',
           'flex justify-center items-center',
+          'transition-colors duration-200',
         )}
         disabled={isFetching}
       >
@@ -155,7 +174,7 @@ export function Field<T extends FieldValues>({
               'h-10 w-12',
               'absolute top-0 right-0',
               'flex justify-center items-center',
-              'opacity-60 hover:opacity-100 transition-opacity duration-300',
+              'opacity-60 hover:opacity-100 transition-opacity duration-200',
             )}
             onClick={passwordVisibilityHandler}
           >
@@ -166,7 +185,7 @@ export function Field<T extends FieldValues>({
           </button>
         )}
         {error && (
-          <p className={clsx('text-red-500 text-sm italic', 'mt-1')}>
+          <p className={clsx('text-red-500 text-xs italic', 'mt-1')}>
             🔥 {error?.message}
           </p>
         )}

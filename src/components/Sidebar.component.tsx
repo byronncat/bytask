@@ -1,5 +1,8 @@
 'use client';
 
+import type { IconProp } from '@fortawesome/fontawesome-svg-core';
+import type { Mission } from 'schema';
+
 import Image from 'next/image';
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
@@ -18,34 +21,35 @@ import {
 } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
-import { useAuth, useGlobal } from '@/providers';
+// import { missionAction } from '@/api';
+import { useAuth } from '@/providers';
 import { Divider } from '@/components';
 import { ROUTE } from '@/constants/serverConfig';
-import workSpace from '@/assets/images/workspace-icon.webp';
-import type { IconProp } from '@fortawesome/fontawesome-svg-core';
-import { Mission } from 'schema';
-import { missionAction } from '@/api';
+import workspace from '@/assets/images/workspace-icon.webp';
 
 export default function Sidebar({
   className,
 }: Readonly<{ className: string }>) {
   const [minimized, setMinimized] = useState(false);
   const [fetching, setFetching] = useState(true);
-  const [missions, setMissions] = useState<Mission[] | null>();
-  const { user, logout } = useAuth();
-  const { reloadTrigger } = useGlobal();
+  const [
+    missions,
+    //  setMissions
+  ] = useState<Mission[] | null>();
+  const { user, logout, fetchUser } = useAuth();
 
   async function fetchMissions() {
     setFetching(true);
-    const { success, data } = await missionAction.getMany();
-    if (success) setMissions(data);
-    else setMissions(null);
+    // const { success, data } = await missionAction.getMany();
+    // if (success) setMissions(data);
+    // else setMissions(null);
     setFetching(false);
   }
 
   useEffect(() => {
+    fetchUser();
     fetchMissions();
-  }, [reloadTrigger]);
+  }, [fetchUser]);
 
   return (
     <div
@@ -73,7 +77,7 @@ export default function Sidebar({
         {!minimized && (
           <div className={clsx('flex items-center', minimized && 'hidden')}>
             <Image
-              src={user?.profile_photo?.url || workSpace.src}
+              src={workspace.src}
               alt="workspace-icon"
               width={32}
               height={32}
@@ -82,10 +86,10 @@ export default function Sidebar({
             <h1
               className={clsx(
                 'font-semibold',
-                'w-36 text-ellipsis overflow-hidden',
+                'w-36 text-ellipsis overflow-hidden whitespace-nowrap',
               )}
             >
-              {user?.username}
+              {user?.name}
             </h1>
           </div>
         )}

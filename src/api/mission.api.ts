@@ -2,16 +2,14 @@
 
 import { FILTER_BY, SORT_BY, SORT_ORDER } from '@/constants/taskMetadata';
 import type { Api } from 'api';
-import { Mission } from 'schema';
-
-const serverHost = process.env.NEXT_PUBLIC_DOMAIN;
-if (!serverHost) throw Error('Server Host is not defined');
+import type { Mission } from 'schema';
+import { SERVER_API } from '@/constants/serverConfig';
 
 const apiUrl = {
-  createMission: `${serverHost}/v1/missions`,
-  getMissions: `${serverHost}/v1/missions`,
-  getOneMission: (id: Mission['id']) => `${serverHost}/v1/missions/${id}`,
-  deleteMission: `${serverHost}/v1/missions`,
+  createMission: `${SERVER_API}/v1/missions`,
+  getMissions: `${SERVER_API}/v1/missions`,
+  getOneMission: (id: Mission['id']) => `${SERVER_API}/v1/missions/${id}`,
+  deleteMission: `${SERVER_API}/v1/missions`,
 };
 
 export async function create(

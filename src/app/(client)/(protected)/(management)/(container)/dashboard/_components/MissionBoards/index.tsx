@@ -4,7 +4,9 @@ import clsx from 'clsx';
 import { faPlus } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
-import { Container, FetchingBoards, CreateModal } from './';
+import Container from './Container';
+import CreateModal from './CreateModal';
+import FetchingBoards from './FetchingBoards';
 import { useMission } from '@/providers';
 import { ROUTE } from '@/constants/serverConfig';
 

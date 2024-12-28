@@ -2,16 +2,14 @@
 
 import type { Api } from 'api';
 import { Mission, ITaskList } from 'schema';
-
-const serverHost = process.env.NEXT_PUBLIC_DOMAIN;
-if (!serverHost) throw Error('Server Host is not defined');
+import { SERVER_API } from '@/constants/serverConfig';
 
 const apiUrl = {
-  createList: `${serverHost}/v1/lists`,
+  createList: `${SERVER_API}/v1/lists`,
   getListByMission: (missionId: Mission['id']) =>
-    `${serverHost}/v1/missions/${missionId}/lists`,
-  updateList: `${serverHost}/v1/lists`,
-  deleteList: `${serverHost}/v1/lists`,
+    `${SERVER_API}/v1/missions/${missionId}/lists`,
+  updateList: `${SERVER_API}/v1/lists`,
+  deleteList: `${SERVER_API}/v1/lists`,
 };
 
 export async function create(

@@ -15,6 +15,7 @@ export const ROUTE = {
   // Auth
   LOGIN: '/login',
   SIGNUP: '/signup',
+  FORGOT_PASSWORD: '/forgot-password',
 
   // Protected
   DASHBOARD: '/dashboard',
@@ -24,3 +25,10 @@ export const ROUTE = {
   TALBE_VIEW: '/table',
   STATISTICS: '/statistics',
 };
+
+const SECRET_KEY = process.env.NEXT_PUBLIC_SECRET || 'secret';
+export const ENCODED_KEY = new TextEncoder().encode(SECRET_KEY);
+
+export const HOST_URL =
+  process.env.NEXT_PUBLIC_HOST_URL || 'http://localhost:3000';
+export const SERVER_API = `${HOST_URL}/api`;

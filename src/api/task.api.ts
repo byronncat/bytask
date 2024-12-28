@@ -1,13 +1,11 @@
 'use client';
 
 import type { Api } from 'api';
-import { ITask } from 'schema';
-
-const serverHost = process.env.NEXT_PUBLIC_DOMAIN;
-if (!serverHost) throw Error('Server Host is not defined');
+import type { ITask } from 'schema';
+import { SERVER_API } from '@/constants/serverConfig';
 
 const apiUrl = {
-  createTask: `${serverHost}/v1/tasks`,
+  createTask: `${SERVER_API}/v1/tasks`,
 };
 
 export async function create(

@@ -1,13 +1,13 @@
 'use client';
 
 import type { Mission } from 'schema';
-import type { Option } from '@/app/(client)/(protected)/dashboard/_components';
+import type { Option } from '@/app/(client)/(protected)/(management)/(container)/dashboard/_components';
 
 import {
   useContext,
   createContext,
   useState,
-  useEffect,
+  // useEffect,
   useCallback,
 } from 'react';
 import { missionAction } from '@/api';
@@ -38,9 +38,9 @@ export default function MissionManagementProvider({
     return success;
   }, []);
 
-  useEffect(() => {
-    fetchMissions();
-  }, [fetchMissions]);
+  // useEffect(() => {
+  //   fetchMissions();
+  // }, [fetchMissions]);
 
   return (
     <MissionManagementContext.Provider

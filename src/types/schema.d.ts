@@ -7,8 +7,8 @@ declare module 'schema' {
     readonly id: uuidv4;
     email: string;
     username: string;
-    password: string;
-    profile_photo?: Image;
+    password?: string;
+    verified: boolean;
   };
 
   export type Mission = {

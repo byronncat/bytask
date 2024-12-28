@@ -1,11 +1,15 @@
-'use client';
-
+import { redirect } from 'next/navigation';
 import clsx from 'clsx';
+import { authAction_v2 } from '@/api';
 import { Brand, ThemeSelection, Sidebar } from '@/components';
+import { ROUTE } from '@/constants/serverConfig';
 
-export default function Layout({
+export default async function Layout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
+  const session = await authAction_v2.authenticate();
+  if (!session) redirect(ROUTE.LOGIN);
+
   return (
     <div className="w-screen h-screen">
       <Header className="py-2 px-4" />

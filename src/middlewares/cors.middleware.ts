@@ -1,7 +1,5 @@
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
-import { getUser } from '@/helpers';
-import { STATUS_CODE } from '@/constants/serverConfig';
 
 const allowedOrigins = ['http://192.168.1.13:3000', 'http://localhost:3000'];
 

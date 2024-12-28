@@ -9,9 +9,10 @@ async function hash(password: string): Promise<string> {
 }
 
 async function compare(
-  password: string,
-  hashPassword: string,
+  password?: string,
+  hashPassword?: string,
 ): Promise<boolean> {
+  if (!password || !hashPassword) return false;
   password = escapeRegExp(password);
   return await bcrypt.compare(password, hashPassword);
 }

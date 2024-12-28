@@ -1,10 +1,14 @@
-import validator from '@/libraries/serverValidation';
-import session from '@/libraries/session';
-import { UserModel } from '@/database';
-import { password as passwordHelper } from '@/helpers';
-import { STATUS_CODE } from '@/constants/serverConfig';
+import type { NextRequest } from 'next/server';
+import type { SessionPayload } from 'api';
 
-export async function POST(request: Request) {
+import { SignJWT } from 'jose';
+import { UserModel } from '@/database';
+import validator from '@/libraries/zod';
+import { sendEmail } from '@/libraries/nodemailer';
+import { password as passwordHelper, createVerifyEmail } from '@/helpers';
+import { STATUS_CODE, ENCODED_KEY, SERVER_API } from '@/constants/serverConfig';
+
+export async function POST(request: NextRequest) {
   try {
     const data = await request.json().catch(() => {
       throw 'Invalid request body!';
@@ -14,27 +18,15 @@ export async function POST(request: Request) {
     if (result.success) {
       const { username, email, password } = data;
 
-      const existingUser = await UserModel.findOne({
-        $or: [{ email }, { username }],
-      });
+      const existingUser = await UserModel.findOne({ email });
 
-      if (existingUser) {
-        if (existingUser.email === email)
-          return new Response(JSON.stringify('Email already exists!'), {
-            status: STATUS_CODE.BAD_REQUEST,
-            headers: {
-              'Content-Type': 'application/json',
-            },
-          });
-
-        if (existingUser.username === username)
-          return new Response(JSON.stringify('Username already exists!'), {
-            status: STATUS_CODE.BAD_REQUEST,
-            headers: {
-              'Content-Type': 'application/json',
-            },
-          });
-      }
+      if (existingUser && existingUser.email === email)
+        return new Response(JSON.stringify('Email already exists!'), {
+          status: STATUS_CODE.BAD_REQUEST,
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        });
 
       const user = await UserModel.create({
         username,
@@ -42,13 +34,34 @@ export async function POST(request: Request) {
         password: await passwordHelper.hash(password),
       });
 
-      await session.create(user.id);
-      return new Response(JSON.stringify('User created successfully!'), {
-        status: STATUS_CODE.CREATED,
-        headers: {
-          'Content-Type': 'application/json',
-        },
+      const token = await new SignJWT({
+        name: username,
+        email,
+        id: user.id,
+      } as SessionPayload)
+        .setProtectedHeader({ alg: 'HS256' })
+        .setExpirationTime('30m')
+        .sign(ENCODED_KEY);
+
+      await sendEmail({
+        to: email,
+        subject: 'Verify your email',
+        text: 'Please verify your email',
+        html: createVerifyEmail({
+          username,
+          verificationLink: `${SERVER_API}/v1/auth/verify?token=${token}`,
+        }),
       });
+
+      return new Response(
+        JSON.stringify('User created! Check your email to verify for login.'),
+        {
+          status: STATUS_CODE.CREATED,
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        },
+      );
     } else {
       return new Response(JSON.stringify(result.error.issues[0].message), {
         status: STATUS_CODE.BAD_REQUEST,

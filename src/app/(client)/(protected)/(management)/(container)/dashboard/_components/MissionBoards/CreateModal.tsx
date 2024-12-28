@@ -1,14 +1,14 @@
 import type { Mission } from 'schema';
-import type { FieldError } from 'react-hook-form';
+// import type { FieldError } from 'react-hook-form';
 
 import { useRouter } from 'next/navigation';
 import { useRef } from 'react';
 import { useForm } from 'react-hook-form';
 import clsx from 'clsx';
 
-import { Field } from '@/components';
+// import { Field } from '@/components';
 import { missionAction } from '@/api';
-import { useOutsideAlerter } from '@/hooks';
+// import { useOutsideAlerter } from '@/hooks';
 import { ROUTE } from '@/constants/serverConfig';
 
 export default function CreateModal({
@@ -20,9 +20,9 @@ export default function CreateModal({
 }>) {
   const router = useRouter();
   const {
-    register,
+    // register,
     handleSubmit,
-    formState: { errors },
+    // formState: { errors },
   } = useForm();
 
   async function createMissionHandler(data: Partial<Mission>) {
@@ -38,7 +38,7 @@ export default function CreateModal({
   }
 
   const ref = useRef<HTMLDivElement>(null);
-  useOutsideAlerter(ref, onExit);
+  // useOutsideAlerter(ref, onExit);
 
   // const backgrounds = [
   //   'bg-gray-200', // Plain
@@ -76,7 +76,7 @@ export default function CreateModal({
 
         <form onSubmit={handleSubmit(submitHandler)}>
           <div className="mb-6">
-            <Field
+            {/* <Field
               key="title"
               id="title"
               type="text"
@@ -94,7 +94,7 @@ export default function CreateModal({
                 required: 'This field is required',
               }}
               error={errors['title'] as FieldError}
-            />
+            /> */}
           </div>
 
           <div className="flex justify-end space-x-2">

@@ -1,11 +1,12 @@
-import validator from '@/libraries/serverValidation';
+import type { User } from 'schema';
+import type { NextRequest } from 'next/server';
+import validator from '@/libraries/zod';
 import session from '@/libraries/session';
 import { UserModel } from '@/database';
 import { password as passwordHelper } from '@/helpers';
 import { STATUS_CODE } from '@/constants/serverConfig';
-import type { User } from 'schema';
 
-export async function POST(request: Request) {
+export async function POST(request: NextRequest) {
   try {
     const data = await request.json().catch(() => {
       throw 'Invalid request body!';

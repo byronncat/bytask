@@ -1,8 +1,9 @@
 'use client';
 
 import type { User } from 'schema';
+import type { SessionPayload } from 'api';
+import type { LoginFormData } from '@/constants/form';
 
-import { useRouter } from 'next/navigation';
 import {
   createContext,
   useContext,
@@ -10,14 +11,19 @@ import {
   useState,
   useEffect,
 } from 'react';
-import { authAction } from '@/api';
-import { ROUTE } from '@/constants/serverConfig';
+import { authAction_v2 } from '@/api';
+import { toast } from '@/libraries/toast';
 
 const AuthContext = createContext(
   {} as {
-    user?: User;
-    login: () => void;
+    user?: SessionPayload;
+    updateUserData: (data: Partial<User>) => void;
+    login: (
+      type: 'credentials' | 'google',
+      data?: LoginFormData,
+    ) => Promise<void>;
     logout: () => void;
+    fetchUser: () => Promise<void>;
   },
 );
 export const useAuth = () => useContext(AuthContext);
@@ -25,25 +31,36 @@ export const useAuth = () => useContext(AuthContext);
 export default function AuthenticationProvider({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
-  const router = useRouter();
-  const [user, setUser] = useState<User>();
+  const [user, setUser] = useState<SessionPayload>();
 
   const fetchUser = useCallback(async () => {
-    const { success, data } = await authAction.authenticate();
-    if (success) setUser(data);
+    const session = await authAction_v2.authenticate();
+    if (!session) return;
+    setUser(session.user);
   }, []);
 
-  const login = useCallback(() => {
-    router.push(ROUTE.DASHBOARD);
-    fetchUser();
-  }, [router, fetchUser]);
+  const login = async (
+    type: 'credentials' | 'google',
+    data?: LoginFormData,
+  ) => {
+    if (type === 'google') await authAction_v2.googleLogin();
 
-  const logout = useCallback(async () => {
-    const { success } = await authAction.logout();
-    if (!success) return;
-    router.push(ROUTE.LOGIN);
+    if (!data) return;
+    const { success, message } = await authAction_v2.login(data);
+    if (!success) toast.error(message);
+  };
+
+  const logout = async () => {
     setUser(undefined);
-  }, [router]);
+    await authAction_v2.logout();
+  };
+
+  const updateUserData = (data: Partial<User>) => {
+    setUser({
+      ...user,
+      name: data.username,
+    } as SessionPayload);
+  };
 
   useEffect(() => {
     fetchUser();
@@ -53,8 +70,10 @@ export default function AuthenticationProvider({
     <AuthContext.Provider
       value={{
         user,
+        updateUserData,
         login,
         logout,
+        fetchUser,
       }}
     >
       {children}

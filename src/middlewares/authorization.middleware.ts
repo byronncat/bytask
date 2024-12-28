@@ -22,11 +22,11 @@ export async function authorizationMiddleware(req: NextRequest) {
     const cookie = (await cookies()).get('session')?.value;
     const sessionData = (await session.decrypt(cookie)) as SessionPayload;
 
-    if (isProtectedRoute && !sessionData?.userId) {
+    if (isProtectedRoute && !sessionData?.id) {
       return NextResponse.redirect(new URL(ROUTE.LOGIN, req.nextUrl));
     }
 
-    if (isAuthRoute && sessionData?.userId) {
+    if (isAuthRoute && sessionData?.id) {
       return NextResponse.redirect(new URL(ROUTE.DASHBOARD, req.nextUrl));
     }
 
