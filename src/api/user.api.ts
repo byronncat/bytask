@@ -1,29 +1,23 @@
 import type { Api } from 'api';
-import type { User } from 'schema';
-
-import { SERVER_API, ENCODED_KEY } from '@/constants/serverConfig';
-import { SignJWT } from 'jose';
+import type {
+  ChangePasswordFormData,
+  SetNewPasswordFormData,
+  ChangeProfileFormData,
+} from '@/constants/form';
+import { SERVER_API } from '@/constants/serverConfig';
 
 const apiUrl = {
   updateAccount: `${SERVER_API}/v1/users`,
+  changePassword: `${SERVER_API}/v1/users/password`,
 };
 
 export async function updateAccount(
-  userID: User['id'],
-  data: Partial<User>,
-): Promise<Api<Pick<User, 'username'>>> {
-  const token = await new SignJWT({ uid: userID })
-    .setProtectedHeader({
-      alg: 'HS256',
-    })
-    .setExpirationTime('5m')
-    .sign(ENCODED_KEY);
-
+  data: ChangeProfileFormData,
+): Promise<Api<ChangeProfileFormData>> {
   return await fetch(apiUrl.updateAccount, {
     method: 'PUT',
     headers: {
       'Content-Type': 'application/json',
-      Authorization: `Bearer ${token}`,
     },
     body: JSON.stringify(data),
   })
@@ -33,7 +27,33 @@ export async function updateAccount(
       return {
         success: true,
         message: 'Account updated successfully',
-        data: data as Pick<User, 'username'>,
+        data: data as ChangeProfileFormData,
+      };
+    })
+    .catch((error) => {
+      return {
+        success: false,
+        message: error,
+      };
+    });
+}
+
+export async function changePassword(
+  data: ChangePasswordFormData | SetNewPasswordFormData,
+): Promise<Api> {
+  return await fetch(apiUrl.changePassword, {
+    method: 'PUT',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(data),
+  })
+    .then(async (res) => {
+      const message = (await res.json()) as Api['message'];
+      if (!res.ok) throw message;
+      return {
+        success: true,
+        message,
       };
     })
     .catch((error) => {

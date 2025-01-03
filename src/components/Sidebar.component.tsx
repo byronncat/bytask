@@ -1,28 +1,24 @@
 'use client';
 
 import type { IconProp } from '@fortawesome/fontawesome-svg-core';
-import type { Mission } from 'schema';
 
 import Image from 'next/image';
 import Link from 'next/link';
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import clsx from 'clsx';
 import {
   faChevronLeft,
   faChevronRight,
   faTableList,
   faCalendarDays,
-  faGear,
-  faHouse,
   faChartSimple,
   faRightFromBracket,
-  faUser,
-  faThumbTack,
+  faGear,
+  faTag,
 } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
-// import { missionAction } from '@/api';
-import { useAuth } from '@/providers';
+import { useAuth, useGlobal } from '@/providers';
 import { Divider } from '@/components';
 import { ROUTE } from '@/constants/serverConfig';
 import workspace from '@/assets/images/workspace-icon.webp';
@@ -32,24 +28,18 @@ export default function Sidebar({
 }: Readonly<{ className: string }>) {
   const [minimized, setMinimized] = useState(false);
   const [fetching, setFetching] = useState(true);
-  const [
-    missions,
-    //  setMissions
-  ] = useState<Mission[] | null>();
   const { user, logout, fetchUser } = useAuth();
+  const { refresh } = useGlobal();
 
-  async function fetchMissions() {
+  const fetchMetadata = useCallback(async () => {
     setFetching(true);
-    // const { success, data } = await missionAction.getMany();
-    // if (success) setMissions(data);
-    // else setMissions(null);
+    await fetchUser();
     setFetching(false);
-  }
+  }, [fetchUser]);
 
   useEffect(() => {
-    fetchUser();
-    fetchMissions();
-  }, [fetchUser]);
+    fetchMetadata();
+  }, [fetchMetadata]);
 
   return (
     <div
@@ -74,27 +64,33 @@ export default function Sidebar({
           !minimized && 'px-3',
         )}
       >
-        {!minimized && (
-          <div className={clsx('flex items-center', minimized && 'hidden')}>
-            <Image
-              src={workspace.src}
-              alt="workspace-icon"
-              width={32}
-              height={32}
-              className="mr-2 rounded"
-            />
-            <h1
-              className={clsx(
-                'font-semibold',
-                'w-36 text-ellipsis overflow-hidden whitespace-nowrap',
-              )}
-            >
-              {user?.name}
-            </h1>
-          </div>
-        )}
+        {!minimized &&
+          (fetching ? (
+            <TitleSkeleton />
+          ) : (
+            <div className={clsx('flex items-center', minimized && 'hidden')}>
+              <Image
+                src={workspace.src}
+                alt="workspace-icon"
+                width={32}
+                height={32}
+                className="mr-2 rounded"
+              />
+              <h1
+                className={clsx(
+                  'font-semibold',
+                  'w-36 text-ellipsis overflow-hidden whitespace-nowrap',
+                )}
+              >
+                {user?.name}
+              </h1>
+            </div>
+          ))}
         <ToggleMinimizedButton
-          onClick={() => setMinimized(!minimized)}
+          onClick={() => {
+            setMinimized(!minimized);
+            refresh();
+          }}
           minimized={minimized}
         />
       </div>
@@ -103,27 +99,20 @@ export default function Sidebar({
         <>
           <Divider className="w-full" />
 
-          <div className={clsx('grow', 'text-sm', 'pt-3 pb-2', 'space-y-3')}>
+          <div className={clsx('grow', 'text-sm', 'py-3', 'space-y-3')}>
             <ul>
               <ListItem
                 type="icon"
-                data={faHouse}
+                data={faChartSimple}
                 text="Dashboard"
                 href={ROUTE.DASHBOARD}
               />
               <ListItem
                 type="icon"
-                data={faUser}
-                text="Profile"
-                href={ROUTE.PROFILE}
+                data={faGear}
+                text="Settings"
+                href={ROUTE.SETTINGS}
               />
-              <ListItem
-                type="icon"
-                data={faChartSimple}
-                text="Statistics"
-                href={ROUTE.STATISTICS}
-              />
-              <ListItem type="icon" data={faGear} text="Workspace settings" />
             </ul>
 
             <div className="w-full">
@@ -143,26 +132,13 @@ export default function Sidebar({
                   href={ROUTE.CALENDAR_VIEW}
                   textItalic
                 />
-              </ul>
-            </div>
-
-            <div className="w-full">
-              <Heading>Missions</Heading>
-              <ul className="pt-1">
-                {fetching
-                  ? Array.from({ length: 7 }).map((_, index) => (
-                      <MissionSkeleton key={index} />
-                    ))
-                  : missions?.map((mission) => (
-                      <ListItem
-                        key={mission.id}
-                        type="icon"
-                        data={faThumbTack}
-                        iconClassName="rotate-45"
-                        text={mission.title}
-                        href={`${ROUTE.BOARD_VIEW}/${mission.id}`}
-                      />
-                    ))}
+                <ListItem
+                  type="icon"
+                  data={faTag}
+                  text="Card"
+                  href={ROUTE.CARD_VIEW}
+                  textItalic
+                />
               </ul>
             </div>
           </div>
@@ -230,6 +206,7 @@ function ListItem({
         'flex items-center',
         'cursor-pointer',
         'hover:bg-on-background/[.12]',
+        'transition-[background-color] duration-200',
         className,
       )}
     >
@@ -283,12 +260,12 @@ function ToggleMinimizedButton({
       type="button"
       className={clsx(
         'absolute top-1/2 transform -translate-y-1/2',
-        'bg-background box-content',
+        'box-content',
         'border-divider',
         'cursor-pointer overflow-hidden',
         minimized
-          ? 'size-6 rounded-full border-2 -right-4'
-          : 'size-8 rounded right-3',
+          ? 'size-6 rounded-full border-2 -right-4 bg-background'
+          : 'size-8 rounded right-3 bg-on-background/[.07]',
       )}
     >
       <div
@@ -296,6 +273,7 @@ function ToggleMinimizedButton({
           'size-full',
           'flex items-center justify-center',
           'hover:bg-on-background/[.12]',
+          'transition-[background-color] duration-200',
           minimized && 'group-hover:bg-on-background/[.12]',
         )}
         onClick={onClick}
@@ -309,19 +287,20 @@ function ToggleMinimizedButton({
   );
 }
 
-function MissionSkeleton() {
+function TitleSkeleton() {
   return (
-    <div
-      className={clsx('pl-3 h-8 w-full', 'animate-pulse', 'flex items-center')}
-    >
+    <div className={clsx('flex items-center', 'animate-pulse')}>
+      <div
+        className={clsx('mr-2 rounded size-8', 'bg-gray-200 dark:bg-gray-700')}
+      />
       <div
         className={clsx(
-          'h-3 w-1/2',
-          'flex items-center',
-          'bg-surface-1',
+          'font-semibold',
           'rounded',
+          'w-36 text-ellipsis overflow-hidden whitespace-nowrap',
+          'h-4 bg-gray-200 dark:bg-gray-700',
         )}
-      ></div>
+      />
     </div>
   );
 }

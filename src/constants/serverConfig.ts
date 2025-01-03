@@ -16,17 +16,19 @@ export const ROUTE = {
   LOGIN: '/login',
   SIGNUP: '/signup',
   FORGOT_PASSWORD: '/forgot-password',
+  RESET_PASSWORD: '/reset-password',
 
   // Protected
   DASHBOARD: '/dashboard',
-  PROFILE: '/profile',
-  BOARD_VIEW: '/board',
-  CALENDAR_VIEW: '/calendar',
+  SETTINGS: '/settings',
   TALBE_VIEW: '/table',
-  STATISTICS: '/statistics',
+  CALENDAR_VIEW: '/calendar',
+  CARD_VIEW: '/card',
+  TASK: '/task',
+  CREATE_TASK: '/task/create',
 };
 
-const SECRET_KEY = process.env.NEXT_PUBLIC_SECRET || 'secret';
+const SECRET_KEY = process.env.SECRET || 'secret';
 export const ENCODED_KEY = new TextEncoder().encode(SECRET_KEY);
 
 export const HOST_URL =

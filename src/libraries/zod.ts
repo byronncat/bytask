@@ -25,10 +25,18 @@ const ForgotPasswordValidation = z.object({
   email: z.string({ message: 'Email is required' }).email('Email is invalid'),
 });
 
+const ChangePasswordValidation = z.object({
+  currentPassword: z.string().optional(),
+  newPassword: z
+    .string({ message: 'New password is required' })
+    .min(6, { message: 'New password must be at least 6 characters' }),
+});
+
 const validator = {
   login: LoginValidation.safeParse,
   signup: SignupValidation.safeParse,
   forgotPassword: ForgotPasswordValidation.safeParse,
+  changePassword: ChangePasswordValidation.safeParse,
   parseErrors,
 };
 

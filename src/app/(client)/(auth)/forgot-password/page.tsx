@@ -7,6 +7,7 @@ import clsx from 'clsx';
 
 import { authAction_v1 } from '@/api';
 import { Form } from '@/components';
+import { Label } from '../_components';
 import { toast } from '@/libraries/toast';
 import { FORGOT_PASSWORD_FORM } from '@/constants/form';
 import { ROUTE } from '@/constants/serverConfig';
@@ -24,6 +25,7 @@ export default function ForgotPasswordPage() {
         className="w-full"
         submitText="Send reset email"
         onSubmit={sendEmailHandler}
+        Label={Label}
       />
       <Link
         href={ROUTE.LOGIN}

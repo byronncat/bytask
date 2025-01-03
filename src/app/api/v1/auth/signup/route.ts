@@ -7,6 +7,7 @@ import validator from '@/libraries/zod';
 import { sendEmail } from '@/libraries/nodemailer';
 import { password as passwordHelper, createVerifyEmail } from '@/helpers';
 import { STATUS_CODE, ENCODED_KEY, SERVER_API } from '@/constants/serverConfig';
+import { ACCOUNT_TYPE } from '@/constants/metadata';
 
 export async function POST(request: NextRequest) {
   try {
@@ -32,12 +33,14 @@ export async function POST(request: NextRequest) {
         username,
         email,
         password: await passwordHelper.hash(password),
+        type: ACCOUNT_TYPE.CREDENTIALS,
       });
 
       const token = await new SignJWT({
+        id: user.id,
         name: username,
         email,
-        id: user.id,
+        type: user.type,
       } as SessionPayload)
         .setProtectedHeader({ alg: 'HS256' })
         .setExpirationTime('30m')

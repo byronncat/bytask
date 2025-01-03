@@ -1,8 +1,9 @@
+import type { Document } from 'mongoose';
+import type { Task, User } from 'schema';
+
 import mongoose from 'mongoose';
 import { v4 as uuidv4 } from 'uuid';
-import type { Document, Types } from 'mongoose';
-import type { ILabel, Mission, ITask, ITaskList, User } from 'schema';
-import { STATUS } from '@/constants/taskMetadata';
+import { TASK_STATUS } from '@/constants/metadata';
 
 interface UserDocument extends User, Document {
   id: User['id'];
@@ -15,66 +16,69 @@ const UserSchema = new mongoose.Schema<UserDocument>({
   username: { type: String, required: true },
   password: { type: String },
   verified: { type: Boolean, required: true, default: false },
+  type: { type: Number, required: true },
 });
 
-interface LabelDocument extends ILabel, Document {
-  id: ILabel['id'];
-  _doc?: ILabel;
-}
+// interface LabelDocument extends Label, Document {
+//   id: Label['id'];
+//   _doc?: Label;
+// }
 
-const LabelSchema = new mongoose.Schema<LabelDocument>({
-  name: { type: String },
-  color: { type: String, required: true },
-});
+// const LabelSchema = new mongoose.Schema<LabelDocument>({
+//   name: { type: String },
+//   color: { type: String, required: true },
+// });
 
-interface MissionDocument extends Mission, Document {
-  id: Mission['id'];
-  labels: Types.DocumentArray<LabelDocument>;
-  _doc?: Mission;
-}
+// interface WorkspaceDocument extends Workspace, Document {
+//   id: Workspace['id'];
+//   labels: Types.DocumentArray<LabelDocument>;
+//   _doc?: Workspace;
+// }
 
-const MissionSchema = new mongoose.Schema<MissionDocument>({
-  title: { type: String, required: true },
-  user_id: { type: String, required: true, ref: 'user' },
-  labels: {
-    type: [LabelSchema],
-    required: true,
-    default: () => [
-      { color: '#216E4E' },
-      { color: '#E2B203' },
-      { color: '#AE2E24' },
-      { color: '#0055CC' },
-    ],
-  },
-  description: { type: String },
-  status: { type: Number, required: true, default: STATUS.TODO },
-  actived_at: { type: Date, required: true, default: Date.now },
-  created_at: { type: Date, required: true, default: Date.now },
-});
+// const WorkspaceSchema = new mongoose.Schema<WorkspaceDocument>({
+//   labels: {
+//     type: [LabelSchema],
+//     required: true,
+//     default: () => [
+//       { color: '#216E4E' },
+//       { color: '#E2B203' },
+//       { color: '#AE2E24' },
+//       { color: '#0055CC' },
+//     ],
+//   },
+// });
 
-interface TaskListDocument extends ITaskList, Document {
-  id: ITaskList['id'];
-  _doc?: ITaskList;
-}
-
-const TaskListSchema = new mongoose.Schema<TaskListDocument>({
-  title: { type: String, required: true },
-  mission_id: { type: String, required: true, ref: 'mission' },
-});
-
-interface TaskDocument extends ITask, Document {
-  id: ITask['id'];
-  _doc?: ITask;
+interface TaskDocument extends Task, Document {
+  id: Task['id'];
+  _doc?: Task;
 }
 
 const TaskSchema = new mongoose.Schema<TaskDocument>({
   title: { type: String, required: true },
-  mission_id: { type: String, required: true, ref: 'mission' },
-  list_id: { type: String, required: true, ref: 'taskList' },
+  uid: { type: String, required: true, ref: 'user' },
   description: { type: String },
-  label: { type: String, ref: 'label' },
-  startDate: { type: Date },
-  dueDate: { type: Date },
+  cover: { type: String },
+  status: { type: Number, required: true, default: TASK_STATUS.TODO },
+  start_date: { type: Date },
+  due_date: { type: Date },
+  recently_updated: { type: Date, required: true, default: Date.now },
+  created_at: { type: Date, required: true, default: Date.now },
+  // labels: [{ type: String, ref: 'label' }],
+  // checklists: [
+  //   {
+  //     title: { type: String, required: true },
+  //     items: [
+  //       {
+  //         title: { type: String, required: true },
+  //         checked: { type: Boolean, required: true, default: false },
+  //       },
+  //     ],
+  //   },
+  // ],
 });
 
-export { UserSchema, MissionSchema, TaskListSchema, TaskSchema };
+export {
+  UserSchema,
+  TaskSchema,
+  // WorkspaceSchema
+};

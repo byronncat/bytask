@@ -1,7 +1,11 @@
 import type { Metadata } from 'next';
 
 import { ThemeProvider } from 'next-themes';
-import { AuthProvider, GlobalProvider } from '@/providers';
+import {
+  AuthProvider,
+  GlobalProvider,
+  TaskManagementProvider,
+} from '@/providers';
 import { ToastProvider } from '@/libraries/toast';
 import font from '@/assets/fonts';
 
@@ -13,7 +17,7 @@ import '@/styles/globals.css';
 
 export const metadata: Metadata = {
   title: 'Bytask',
-  description: 'Organizes your tasks and missions',
+  description: 'Organizes your tasks',
 };
 
 export default function RootLayout({
@@ -27,7 +31,9 @@ export default function RootLayout({
         <GlobalProvider>
           <AuthProvider>
             <ThemeProvider>
-              <ToastProvider>{children}</ToastProvider>
+              <TaskManagementProvider>
+                <ToastProvider>{children}</ToastProvider>
+              </TaskManagementProvider>
             </ThemeProvider>
           </AuthProvider>
         </GlobalProvider>

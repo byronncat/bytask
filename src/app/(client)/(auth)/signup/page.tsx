@@ -5,7 +5,7 @@ import type { SignupFormData } from '@/constants/form';
 import clsx from 'clsx';
 import { authAction_v1 } from '@/api';
 import { Form, Divider } from '@/components';
-import { NavigationText, GoogleButton } from '../_components';
+import { NavigationText, GoogleButton, Label } from '../_components';
 import { toast } from '@/libraries/toast';
 import { SIGNUP_FORM } from '@/constants/form';
 import { ROUTE } from '@/constants/serverConfig';
@@ -25,6 +25,7 @@ export default function SignupPage() {
         className="w-full"
         submitText="Sign up"
         onSubmit={signupHandler}
+        Label={Label}
       />
       <Divider className={clsx('my-3', 'text-xs uppercase')} text="or" />
       <GoogleButton />

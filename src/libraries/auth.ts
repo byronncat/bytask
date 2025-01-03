@@ -1,17 +1,13 @@
 import type { User } from 'schema';
 import type { SessionPayload } from 'api';
-import type { LoginFormData } from '@/constants/form';
 
 import NextAuth from 'next-auth';
 import Credentials from 'next-auth/providers/credentials';
 import Google from 'next-auth/providers/google';
-import { SignJWT } from 'jose';
 
-import { sendEmail } from './nodemailer';
 import { UserModel } from '@/database';
-import validator from '@/libraries/zod';
-import { password as passwordHelper, createVerifyEmail } from '@/helpers';
-import { ENCODED_KEY, SERVER_API } from '@/constants/serverConfig';
+import { userService } from '@/services';
+import { ACCOUNT_TYPE } from '@/constants/metadata';
 
 export const { handlers, signIn, signOut, auth } = NextAuth({
   providers: [
@@ -22,57 +18,16 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         password: {},
       },
       authorize: async (credentials) => {
-        const result = validator.login(credentials);
-        if (result.success) {
-          const user = (await UserModel.findOne({
-            email: credentials.identity,
-            password: { $exists: true },
-          })) as User;
-
-          if (!user) {
-            throw new Error('User not found.');
-          }
-
-          if (!user.verified) {
-            const token = await new SignJWT({
-              name: user.username,
-              email: user.email,
-              id: user.id,
-            } as SessionPayload)
-              .setProtectedHeader({ alg: 'HS256' })
-              .setExpirationTime('30m')
-              .sign(ENCODED_KEY);
-
-            await sendEmail({
-              to: user.email,
-              subject: 'Verify your email',
-              text: `Click the link to verify your email`,
-              html: createVerifyEmail({
-                username: user.username,
-                verificationLink: `${SERVER_API}/v1/auth/verify?token=${token}`,
-              }),
-            });
-            throw new Error('User not verified. Please check your email.');
-          }
-
-          if (
-            !(await passwordHelper.compare(
-              (credentials as LoginFormData).password,
-              user.password,
-            ))
-          ) {
-            throw new Error('Incorrect password.');
-          }
-
-          return {
-            id: user.id,
-            name: user.username,
-            email: user.email,
-            type: 'credentials',
-          } as SessionPayload;
-        } else {
-          throw new Error(result.error.issues[0].message);
-        }
+        const {
+          success,
+          message,
+          data: sessionPayload,
+        } = await userService.login('credentials', {
+          email: credentials.identity as string,
+          password: credentials.password as string,
+        });
+        if (success && sessionPayload) return sessionPayload;
+        throw new Error(message);
       },
     }),
   ],
@@ -80,17 +35,17 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
     async signIn({ account, profile, user }) {
       if (account?.provider === 'google' && profile) {
         if (!profile.email_verified) return false;
-        const existingUser = await UserModel.findOne({ email: profile.email });
-        if (!existingUser) {
-          await UserModel.create({
+        const { success, data: sessionPayload } = await userService.login(
+          'google',
+          {
             email: profile.email,
             username: profile.name,
-            verified: true,
-          });
-        } else {
-          user.id = existingUser.id;
+          },
+        );
+        if (success && sessionPayload) {
+          user.id = sessionPayload.id;
+          return true;
         }
-        return true;
       }
       if (account?.provider === 'credentials') {
         return true;
@@ -105,8 +60,9 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         if (!existingUser) return token;
         token.name = existingUser.username;
         token.email = existingUser.email;
-        if (existingUser.password) token.type = 'credentials';
-        else token.type = 'google';
+        token.type = existingUser.password
+          ? ACCOUNT_TYPE.CREDENTIALS
+          : existingUser.type;
       }
       if (user) {
         token.id = (user as SessionPayload).id;

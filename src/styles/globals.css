@@ -4,30 +4,34 @@
 
 @layer base {
   :root {
-    --background: 255 255 255;
+    --background: 242 244 247;
     --on-background: 23 43 77;
+    --foreground: 255 255 255;
+    --on-foreground: 23 43 77;
     --primary: 14 165 233;
     --on-primary: 255 255 255;
-    --surface-1: 241 242 244;
-    --on-surface-1: 23 43 77;
-    --surface-2: 255 255 255;
-    --on-surface-2: 23 43 77;
-    --divider: rgba(0, 0, 0, 0.1);
+    --input: 255 255 255;
+    --divider: rgba(0, 0, 0, 0.2);
   }
 
   [data-theme='dark'] {
     --background: 29 33 37;
     --on-background: 182 194 207;
+    --foreground: 40 46 51;
+    --on-foreground: 226 229 233;
     --primary: 56 189 248;
     --on-primary: 0 0 0;
-    --surface-1: 40 46 51;
-    --on-surface-1: 226 229 233;
-    --surface-2: 34 39 43;
-    --on-surface-2: 182 194 207;
+    --input: 34 39 43;
     --divider: rgba(255, 255, 255, 0.2);
   }
 
   body {
     @apply bg-background text-on-background;
+  }
+}
+
+@layer utilities {
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
   }
 }

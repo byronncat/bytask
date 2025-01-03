@@ -1,4 +1,5 @@
 declare module 'api' {
+  import { ACCOUNT_TYPE } from '@/constants/metadata';
   import type { User } from 'schema';
 
   export interface Api<T = void> {
@@ -11,6 +12,6 @@ declare module 'api' {
     id: User['id'];
     name: User['username'];
     email: User['email'];
-    type: 'credentials' | 'google';
+    type: ACCOUNT_TYPE;
   };
 }

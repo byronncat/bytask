@@ -1,52 +1,52 @@
 declare module 'schema' {
+  import { ACCOUNT_TYPE, TASK_STATUS } from '@/constants/metadata';
   type uuidv4 = string;
-  type HexColor = string;
-  type Status = number;
 
   export type User = {
     readonly id: uuidv4;
     email: string;
     username: string;
     password?: string;
+    type: ACCOUNT_TYPE;
     verified: boolean;
   };
 
-  export type Mission = {
+  // export type Workspace = {
+  //   readonly id: string;
+  //   readonly uid: User['id'];
+  //   label: Label[];
+  // };
+
+  export type Task = {
     readonly id: string;
-    user_id: User['id'];
+    readonly uid: User['id'];
     title: string;
-    labels: ILabel[];
+    status: TASK_STATUS;
     description?: string;
-    status: Status;
-    actived_at?: Date;
-    created_at?: Date;
+    cover?: HexColor;
+    start_date?: string;
+    due_date?: string;
+    recently_updated?: string;
+    created_at?: string;
+    // labels?: Label['id'][];
+    // checklists?: Schecklist[];
   };
 
-  export type ITaskList = {
-    readonly id: string;
-    title: string;
-    mission_id: Mission['id'];
-  };
+  // export type Schecklist = {
+  //   readonly id: string;
+  //   title: string;
+  //   items: SchecklistItem[];
+  // };
 
-  export type ITask = {
-    readonly id: string;
-    title: string;
-    mission_id: Mission['id'];
-    list_id: ITaskList['id'];
-    description?: string;
-    label?: ILabel['id'];
-    startDate?: Date;
-    dueDate?: Date;
-  };
+  // export type SchecklistItem = {
+  //   readonly id: string;
+  //   title: string;
+  //   checked: boolean;
+  // };
 
-  export type ILabel = {
-    readonly id: string;
-    name?: string;
-    color: HexColor;
-  };
-
-  type Image = {
-    url: string;
-    orientation: 'landscape' | 'portrait' | 'square';
-  };
+  // export type Label = {
+  //   readonly id: string;
+  //   name?: string;
+  //   color: HexColor;
+  // };
 }

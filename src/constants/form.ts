@@ -113,12 +113,57 @@ export const RESET_PASSWORD_FORM = {
   ],
 } as const satisfies IForm;
 
+export const CHANGE_PASSWORD_FORM = {
+  fields: [
+    {
+      id: 'currentPassword',
+      label: 'Current password',
+      placeholder: '',
+      type: 'password',
+      validation: {
+        required: 'Current password is required',
+      },
+    },
+    {
+      id: 'newPassword',
+      label: 'New password',
+      placeholder: '',
+      type: 'password',
+      validation: {
+        required: 'New password is required',
+        minLength: {
+          value: 6,
+          message: 'Password must be at least 6 characters',
+        },
+      },
+    },
+  ],
+} as const satisfies IForm;
+
+export const SET_NEW_PASSWORD_FORM = {
+  fields: [
+    {
+      id: 'newPassword',
+      label: 'New password',
+      placeholder: '',
+      type: 'password',
+      validation: {
+        required: 'Password is required',
+        minLength: {
+          value: 6,
+          message: 'Password must be at least 6 characters',
+        },
+      },
+    },
+  ],
+} as const satisfies IForm;
+
 export type SignupFormData = FormData<typeof SIGNUP_FORM>;
 export type LoginFormData = FormData<typeof LOGIN_FORM>;
 export type ForgotPasswordFormData = FormData<typeof FORGOT_PASSWORD_FORM>;
 export type ResetPasswordFormData = FormData<typeof RESET_PASSWORD_FORM>;
+export type ChangePasswordFormData = FormData<typeof CHANGE_PASSWORD_FORM>;
+export type SetNewPasswordFormData = FormData<typeof SET_NEW_PASSWORD_FORM>;
 export type ChangeProfileFormData = {
   username: User['username'];
-  currentPassword: User['password'];
-  newPassword: User['password'];
 };

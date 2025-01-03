@@ -1,8 +1,8 @@
 import Image from 'next/image';
 import Link from 'next/link';
-import { cookies } from 'next/headers';
 import clsx from 'clsx';
 
+import { authAction_v2 } from '@/api';
 import { Brand, ThemeSelection } from '@/components';
 import { ROUTE } from '@/constants/serverConfig';
 import backgroundPattern from '@/assets/images/background-pattern.png';
@@ -20,8 +20,7 @@ export default function LandingPage() {
 }
 
 async function Header({ className }: Readonly<{ className?: string }>) {
-  const cookieStore = await cookies();
-  const session = cookieStore.get('session')?.value;
+  const session = await authAction_v2.authenticate();
 
   const isLogged = session ? true : false;
   return (

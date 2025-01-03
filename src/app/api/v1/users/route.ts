@@ -1,23 +1,19 @@
 import type { NextRequest } from 'next/server';
 import type { ChangeProfileFormData } from '@/constants/form';
 
+import { authAction_v2 } from '@/api';
 import { UserModel } from '@/database';
-import { password as passwordHelper } from '@/helpers';
-import { ENCODED_KEY, STATUS_CODE } from '@/constants/serverConfig';
-import { jwtVerify } from 'jose';
+import { STATUS_CODE } from '@/constants/serverConfig';
 
 export async function PUT(request: NextRequest) {
   try {
-    const searchParams = request.nextUrl.searchParams;
-    const type = searchParams.get('type');
-
     const data = (await request.json().catch(() => {
       throw 'Invalid request body!';
     })) as ChangeProfileFormData;
 
-    const bearerToken = request.headers.get('Authorization');
-    if (!bearerToken) {
-      return new Response(JSON.stringify('Unauthorized!'), {
+    const sessionPayload = (await authAction_v2.authenticate()).user;
+    if (!sessionPayload) {
+      return new Response(JSON.stringify({ message: 'Unauthorized' }), {
         status: STATUS_CODE.UNAUTHORIZED,
         headers: {
           'Content-Type': 'application/json',
@@ -25,14 +21,7 @@ export async function PUT(request: NextRequest) {
       });
     }
 
-    const token = bearerToken.split(' ')[1];
-    const { payload } = await jwtVerify(token, ENCODED_KEY, {
-      algorithms: ['HS256'],
-    }).catch(() => {
-      throw 'Unauthorized!';
-    });
-
-    const user = await UserModel.findById(payload.uid);
+    const user = await UserModel.findById(sessionPayload.id);
     if (!user) {
       return new Response(JSON.stringify('User not found!'), {
         status: STATUS_CODE.NOT_FOUND,
@@ -42,40 +31,9 @@ export async function PUT(request: NextRequest) {
       });
     }
 
-    if (!(type === 'reset-password') && data.currentPassword) {
-      if (data.currentPassword === data.newPassword)
-        return new Response(
-          JSON.stringify('New password must differ from the current password!'),
-          {
-            status: STATUS_CODE.BAD_REQUEST,
-            headers: {
-              'Content-Type': 'application/json',
-            },
-          },
-        );
-      if (!(await passwordHelper.compare(data.currentPassword, user.password)))
-        return new Response(JSON.stringify('Incorrect password!'), {
-          status: STATUS_CODE.UNAUTHORIZED,
-          headers: {
-            'Content-Type': 'application/json',
-          },
-        });
-    }
-
     if (data.username) user.username = data.username;
-
-    if (data.newPassword)
-      user.password = await passwordHelper.hash(data.newPassword!);
     await user.save();
 
-    if (type === 'reset-password') {
-      return new Response(JSON.stringify('Password updated!'), {
-        status: STATUS_CODE.OK,
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      });
-    }
     return new Response(
       JSON.stringify({
         username: user.username,

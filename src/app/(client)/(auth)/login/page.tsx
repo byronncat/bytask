@@ -5,7 +5,7 @@ import type { LoginFormData } from '@/constants/form';
 import clsx from 'clsx';
 import { useAuth } from '@/providers';
 import { Form, Divider } from '@/components';
-import { NavigationText, GoogleButton } from '../_components';
+import { NavigationText, GoogleButton, Label } from '../_components';
 import { LOGIN_FORM } from '@/constants/form';
 import { ROUTE } from '@/constants/serverConfig';
 
@@ -23,6 +23,7 @@ export default function LoginPage() {
         className="w-full"
         submitText="Login"
         onSubmit={loginHandler}
+        Label={Label}
         redirectLink={{
           href: ROUTE.FORGOT_PASSWORD,
           text: 'Forgot your password?',
