@@ -8,7 +8,7 @@ interface StatusProps {
 }
 
 export default function Status({ status, className }: Readonly<StatusProps>) {
-  const statusStyles = {
+  const statusStyles: Record<string, string> = {
     [TASK_STATUS.TODO]: colors.gray,
     [TASK_STATUS.IN_PROGRESS]: colors.blue,
     [TASK_STATUS.DONE]: colors.green,
@@ -20,7 +20,7 @@ export default function Status({ status, className }: Readonly<StatusProps>) {
     overdue: colors.red,
   };
 
-  const statusText = {
+  const statusText: Record<string, string> = {
     [TASK_STATUS.TODO]: 'TO DO',
     [TASK_STATUS.IN_PROGRESS]: 'IN PROGRESS',
     [TASK_STATUS.DONE]: 'DONE',
