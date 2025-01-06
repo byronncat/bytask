@@ -66,7 +66,7 @@ export default function Field<T extends FieldValues>({
               'h-10 w-12',
               'absolute top-0 right-0',
               'flex justify-center items-center',
-              'opacity-60 hover:opacity-100 transition-opacity duration-200',
+              'opacity-60 hover:opacity-100 transition-opacity duration-150',
             )}
             onClick={passwordVisibilityHandler}
           >

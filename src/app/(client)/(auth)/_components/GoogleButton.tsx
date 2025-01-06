@@ -20,7 +20,7 @@ export default function GoogleButton() {
         'font-medium text-on-background',
         'border border-on-background',
         'hover:bg-on-background hover:text-background',
-        'transition-colors duration-200',
+        'transition-colors duration-150',
       )}
       onClick={loginHandler}
     >

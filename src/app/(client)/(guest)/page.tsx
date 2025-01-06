@@ -105,7 +105,7 @@ function Content() {
                 'px-8 py-4 mt-8 sm:mt-10',
                 'text-lg font-bold',
                 'bg-primary text-background',
-                'transition-opacity duration-200 hover:opacity-60',
+                'transition-opacity duration-150 hover:opacity-60',
                 'border border-transparent rounded',
               )}
             >

@@ -32,11 +32,29 @@ const ChangePasswordValidation = z.object({
     .min(6, { message: 'New password must be at least 6 characters' }),
 });
 
+const TaskValidation = z.object({
+  title: z.string({ message: 'Title is required' }),
+  status: z.number().optional(),
+  priority: z.number().optional(),
+  start_date: z.string().optional(),
+  due_date: z.string().optional(),
+  description: z.string().optional(),
+  cover: z.string().optional(),
+});
+
+const TimeSessionValidation = z.object({
+  task_id: z.string({ message: 'Task ID is required' }),
+  start_at: z.string({ message: 'Start time is required' }),
+  end_at: z.string({ message: 'End time is required' }),
+});
+
 const validator = {
   login: LoginValidation.safeParse,
   signup: SignupValidation.safeParse,
   forgotPassword: ForgotPasswordValidation.safeParse,
   changePassword: ChangePasswordValidation.safeParse,
+  task: TaskValidation.safeParse,
+  timeSession: TimeSessionValidation.safeParse,
   parseErrors,
 };
 

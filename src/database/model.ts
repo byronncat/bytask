@@ -1,5 +1,5 @@
 import mongoose from 'mongoose';
-import { TaskSchema, UserSchema } from './schema';
+import { TaskSchema, UserSchema, TimeSessionSchema } from './schema';
 
 mongoose.set('toJSON', {
   virtuals: true,
@@ -15,3 +15,5 @@ export const UserModel =
   mongoose.models.user || mongoose.model('user', UserSchema);
 export const TaskModel =
   mongoose.models.task || mongoose.model('task', TaskSchema);
+export const TimeSessionModel =
+  mongoose.models.time || mongoose.model('time', TimeSessionSchema);

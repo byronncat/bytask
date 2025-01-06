@@ -32,6 +32,9 @@ export async function GET(
       });
     }
 
+    task.recently_updated = new Date();
+    await task.save();
+
     return new Response(JSON.stringify(task), {
       status: STATUS_CODE.OK,
       headers: {

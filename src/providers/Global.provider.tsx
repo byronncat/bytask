@@ -1,6 +1,8 @@
 'use client';
 
 import { useContext, useState, createContext } from 'react';
+import { ThemeProvider } from 'next-themes';
+import { AuthProvider, TaskManagementProvider, TimerProvider } from '.';
 
 const GlobalContext = createContext(
   {} as {
@@ -27,7 +29,13 @@ export default function GlobalProvider({
         refresh,
       }}
     >
-      {children}
+      <ThemeProvider>
+        <AuthProvider>
+          <TaskManagementProvider>
+            <TimerProvider>{children}</TimerProvider>
+          </TaskManagementProvider>
+        </AuthProvider>
+      </ThemeProvider>
     </GlobalContext.Provider>
   );
 }

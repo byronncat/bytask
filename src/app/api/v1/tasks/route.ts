@@ -19,10 +19,7 @@ export async function POST(request: NextRequest) {
       });
     }
 
-    const data = (await request.json()) as Pick<
-      Task,
-      'title' | 'status' | 'start_date' | 'due_date' | 'description' | 'cover'
-    >;
+    const data = (await request.json()) as Task;
 
     if (!data.title) {
       return new Response(JSON.stringify('Title is required'), {
@@ -38,6 +35,7 @@ export async function POST(request: NextRequest) {
       uid: sessionPayload.user.id,
     };
     if (data.status) taskData.status = data.status;
+    if (data.priority) taskData.priority = data.priority;
     if (data.start_date) taskData.start_date = data.start_date;
     if (data.due_date) taskData.due_date = data.due_date;
     if (data.description) taskData.description = data.description;
@@ -74,19 +72,9 @@ export async function PUT(request: NextRequest) {
       });
     }
 
-    const data = (await request.json()) as Pick<
-      Task,
-      | 'id'
-      | 'title'
-      | 'status'
-      | 'start_date'
-      | 'due_date'
-      | 'description'
-      | 'cover'
-    >;
-
-    if (!data.id || !data.title) {
-      return new Response(JSON.stringify('ID and Title are required'), {
+    const data = (await request.json()) as Task;
+    if (!data.id) {
+      return new Response(JSON.stringify('ID is required'), {
         status: STATUS_CODE.BAD_REQUEST,
         headers: {
           'Content-Type': 'application/json',
@@ -107,6 +95,7 @@ export async function PUT(request: NextRequest) {
     task.title = data.title;
     task.status = data.status;
     task.start_date = data.start_date;
+    task.priority = data.priority;
     task.due_date = data.due_date;
     task.description = data.description;
     task.cover = data.cover;
@@ -155,6 +144,10 @@ export async function GET(request: NextRequest) {
     switch (sortBy) {
       case SORT_BY.TITLE:
         sortQuery.title = sortOrder === SORT_ORDER.ASC ? 1 : -1;
+        break;
+      case SORT_BY.PRIORITY:
+        sortQuery.priority = sortOrder === SORT_ORDER.ASC ? 1 : -1;
+        break;
       case SORT_BY.STATUS:
         sortQuery.status = sortOrder === SORT_ORDER.ASC ? 1 : -1;
         break;
@@ -183,11 +176,30 @@ export async function GET(request: NextRequest) {
       }
     }
 
-    const tasks = await TaskModel.find({
+    let tasks = await TaskModel.find({
       uid: sessionPayload.user.id,
       title: { $regex: search || '', $options: 'i' },
       ...filterQuery,
     }).sort(sortQuery);
+
+    if (sortBy === SORT_BY.DUE_DATE || sortBy === SORT_BY.START_DATE) {
+      const dateField = sortBy === SORT_BY.DUE_DATE ? 'due_date' : 'start_date';
+
+      tasks = tasks.sort((a, b) => {
+        const dateA = a[dateField];
+        const dateB = b[dateField];
+        if (!dateA && !dateB) return 0;
+
+        if (!dateA) return 1;
+        if (!dateB) return -1;
+
+        if (sortOrder === SORT_ORDER.ASC) {
+          return dateA.getTime() - dateB.getTime();
+        } else {
+          return dateB.getTime() - dateA.getTime();
+        }
+      });
+    }
 
     return new Response(JSON.stringify(tasks), {
       status: STATUS_CODE.OK,

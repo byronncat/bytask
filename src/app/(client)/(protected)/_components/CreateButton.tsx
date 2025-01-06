@@ -20,7 +20,7 @@ export default function CreateButton() {
             'rounded',
             'text-sm font-semibold',
             'bg-primary text-foreground',
-            'hover:opacity-60 transition-opacity duration-200',
+            'hover:opacity-60 transition-opacity duration-150',
           )}
         >
           Create

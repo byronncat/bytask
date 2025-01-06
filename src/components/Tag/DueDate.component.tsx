@@ -17,6 +17,7 @@ interface DueDateProps {
   className?: string;
   type?: 'date' | 'text';
   done?: boolean;
+  surface?: 'background' | 'foreground';
 }
 
 export default function DueDate({
@@ -35,7 +36,7 @@ export default function DueDate({
 
   if (done) {
     label = 'Done';
-    styles = colors.green;
+    styles = clsx(colors.greenBg, 'text-foreground');
   } else if (isToday(parsedDate)) {
     label = 'Today';
     styles = colors.orange;
@@ -59,7 +60,7 @@ export default function DueDate({
     styles = colors.green;
   } else if (isBefore(parsedDate, today)) {
     label = 'Overdue';
-    styles = colors.red;
+    styles = clsx(colors.regBg, 'text-foreground');
   }
 
   return (

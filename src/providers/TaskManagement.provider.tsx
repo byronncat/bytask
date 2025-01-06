@@ -3,7 +3,7 @@
 import type { Task } from 'schema';
 import type { Query } from '@/constants/metadata';
 
-import { SORT_BY, SORT_ORDER } from '@/constants/metadata';
+import { SORT_BY, SORT_ORDER, TASK_STATUS } from '@/constants/metadata';
 
 import {
   useContext,
@@ -13,14 +13,12 @@ import {
   useCallback,
 } from 'react';
 import { taskAction } from '@/api';
-import { usePathname } from 'next/navigation';
-import { ROUTE } from '@/constants/serverConfig';
+import { useGlobal } from './Global.provider';
 
 const TaskManagementContext = createContext(
   {} as {
     tasks: Task[] | undefined;
     setTasks: React.Dispatch<React.SetStateAction<Task[] | undefined>>;
-    isLoaded: boolean;
     isFetching: boolean;
     setIsFetching: React.Dispatch<React.SetStateAction<boolean>>;
     fetchTask: (
@@ -30,7 +28,7 @@ const TaskManagementContext = createContext(
     createTask: (data: Partial<Task>) => ReturnType<typeof taskAction.create>;
     updateTask: (data: Partial<Task>) => ReturnType<typeof taskAction.update>;
     removeTask: (taskId: Task['id']) => ReturnType<typeof taskAction.remove>;
-    setQuery: React.Dispatch<React.SetStateAction<Query>>;
+    setQuery: React.Dispatch<React.SetStateAction<Query | undefined>>;
   },
 );
 
@@ -41,13 +39,8 @@ export default function TaskManagementProvider({
 }: Readonly<{ children: React.ReactNode }>) {
   const [tasks, setTasks] = useState<Task[]>();
   const [isFetching, setIsFetching] = useState(true);
-  const [isLoaded, setIsLoaded] = useState(false);
-  const [query, setQuery] = useState<Query>({
-    sortBy: SORT_BY.RECENTLY_UPDATED,
-    sortOrder: SORT_ORDER.DESC,
-    search: '',
-  });
-  const pathname = usePathname();
+  const [query, setQuery] = useState<Query>();
+  const { _refresh } = useGlobal();
 
   const fetchTasks = useCallback(async function (query?: Query) {
     setIsFetching(true);
@@ -99,29 +92,15 @@ export default function TaskManagementProvider({
   }, []);
 
   useEffect(() => {
-    if (
-      pathname === ROUTE.CARD_VIEW ||
-      pathname === ROUTE.TALBE_VIEW ||
-      pathname === ROUTE.CALENDAR_VIEW
-    ) {
-      fetchTasks();
-    }
-  }, [fetchTasks, pathname]);
-
-  useEffect(() => {
-    if (isLoaded) fetchTasks(query);
-  }, [query, fetchTasks, isLoaded]);
-
-  useEffect(() => {
-    setIsLoaded(true);
-  }, []);
+    if (!query) return;
+    fetchTasks(query);
+  }, [query, fetchTasks, _refresh]);
 
   return (
     <TaskManagementContext.Provider
       value={{
         tasks,
         setTasks,
-        isLoaded,
         isFetching,
         setIsFetching,
         fetchTask,

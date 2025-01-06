@@ -90,7 +90,7 @@ export default function Form<T extends FieldValues>({
           className={clsx(
             'mt-4 block',
             'text-primary text-sm text-right font-semibold',
-            'hover:opacity-60 transition-opacity duration-200',
+            'hover:opacity-60 transition-opacity duration-150',
           )}
         >
           {redirectLink.text}
@@ -109,7 +109,7 @@ export default function Form<T extends FieldValues>({
           'disabled:opacity-60',
           !isFetching ? 'hover:bg-primary hover:text-background' : 'pr-6',
           'flex justify-center items-center',
-          'transition-colors duration-200',
+          'transition-colors duration-150',
         )}
         disabled={isFetching}
       >

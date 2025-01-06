@@ -34,6 +34,7 @@ export default function TextArea({
         placeholder={placeholder}
         className={clsx(
           'py-2',
+          'resize-none h-32',
           formClassName,
           inputClassName,
           error ? 'border-red-500' : 'border-divider',

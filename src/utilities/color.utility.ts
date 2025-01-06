@@ -5,7 +5,7 @@ export function getContrastColor(color: HexColor): string {
     const luminosity = Color(color).luminosity();
     return luminosity > 0.5 ? '#172B4D' : 'white';
   } catch (error) {
-    console.error(error);
+    // console.error(error);
     return '#172B4D';
   }
 }
@@ -15,7 +15,7 @@ export function parseToHexColor(colorInput: string): string | null {
     const color = Color(colorInput);
     return color.hex().toLowerCase();
   } catch (error) {
-    console.error(error);
+    // console.error(error);
     return null;
   }
 }

@@ -15,7 +15,7 @@ export default async function Layout({
   if (session) redirect(ROUTE.DASHBOARD);
 
   return (
-    <div className={clsx('relative', 'w-screen h-screen overflow-y-auto')}>
+    <div className={clsx('relative', 'w-full h-screen overflow-y-auto')}>
       <div
         className={clsx(
           'py-2 px-4',

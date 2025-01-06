@@ -15,6 +15,7 @@ import {
   faRightFromBracket,
   faGear,
   faTag,
+  faClock,
 } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
@@ -49,7 +50,7 @@ export default function Sidebar({
         'group box-content',
         'backdrop-blur',
         'border-r border-divider',
-        'transition-[width] duration-200',
+        'transition-[width] duration-150',
         minimized
           ? 'w-4 cursor-pointer hover:bg-background bg-background/[.9]'
           : 'w-64 overflow-y-auto bg-background/[.8]',
@@ -107,6 +108,13 @@ export default function Sidebar({
                 text="Dashboard"
                 href={ROUTE.DASHBOARD}
               />
+              <ListItem
+                type="icon"
+                data={faClock}
+                text="Sessions"
+                href={ROUTE.TIMER_SESSION}
+              />
+
               <ListItem
                 type="icon"
                 data={faGear}
@@ -206,7 +214,7 @@ function ListItem({
         'flex items-center',
         'cursor-pointer',
         'hover:bg-on-background/[.12]',
-        'transition-[background-color] duration-200',
+        'transition-[background-color] duration-150',
         className,
       )}
     >
@@ -273,7 +281,7 @@ function ToggleMinimizedButton({
           'size-full',
           'flex items-center justify-center',
           'hover:bg-on-background/[.12]',
-          'transition-[background-color] duration-200',
+          'transition-[background-color] duration-150',
           minimized && 'group-hover:bg-on-background/[.12]',
         )}
         onClick={onClick}

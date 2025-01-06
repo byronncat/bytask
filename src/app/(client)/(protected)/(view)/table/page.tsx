@@ -4,7 +4,7 @@ import type { Task } from 'schema';
 import { useRouter } from 'next/navigation';
 import clsx from 'clsx';
 import { useTask } from '@/providers';
-import { StartDateTag, DueDateTag, StatusTag } from '@/components';
+import { StartDateTag, DueDateTag, StatusTag, PriorityTag } from '@/components';
 
 type TableData = {
   columns: { name?: string; size: number; className?: string }[];
@@ -12,11 +12,13 @@ type TableData = {
 };
 
 export default function TableViewPage() {
-  const { tasks, isLoaded } = useTask();
+  const { tasks, isFetching } = useTask();
+
   const router = useRouter();
   const tableData = {
     columns: [
-      { name: 'Title', size: 3, className: 'ml-4' },
+      { name: 'Title', size: 4, className: 'ml-4' },
+      { name: 'Priority', size: 2 },
       { name: 'Status', size: 2 },
       { name: 'Start date', size: 2 },
       { name: 'Due date', size: 2 },
@@ -31,6 +33,7 @@ export default function TableViewPage() {
             due_date={task.due_date}
           />
         ),
+        priority: <PriorityTag priority={task.priority} />,
         status: <StatusTag status={task.status} />,
         start_date: <StartDateTag date={task.start_date} />,
         due_date: (
@@ -95,34 +98,8 @@ export default function TableViewPage() {
               >
                 <td colSpan={tableData.columns.length} className="p-0"></td>
               </tr>
-              {isLoaded
-                ? tableData.rows.map((row, index) => {
-                    const { id, ...rest } = row;
-                    return (
-                      <tr
-                        key={id as string}
-                        className={clsx(
-                          'h-10',
-                          'bg-foreground',
-                          'border border-divider ',
-                          index === 0 && 'border-t-0',
-                          index === tableData.rows.length - 1 && 'border-b-0',
-                          'hover:bg-primary/[.12] cursor-pointer',
-                        )}
-                        onClick={() => router.push(`${ROUTE.TASK}/${id}`)}
-                      >
-                        {Object.values(rest).map((column, index) => (
-                          <td
-                            key={index}
-                            className={clsx('whitespace-nowrap', 'px-3 py-2')}
-                          >
-                            {column}
-                          </td>
-                        ))}
-                      </tr>
-                    );
-                  })
-                : new Array(3).fill(0).map((_, index) => (
+              {isFetching
+                ? new Array(3).fill(0).map((_, index) => (
                     <tr
                       key={index}
                       className={clsx(
@@ -145,7 +122,34 @@ export default function TableViewPage() {
                         </td>
                       ))}
                     </tr>
-                  ))}
+                  ))
+                : tableData.rows.map((row, index) => {
+                    const { id, ...rest } = row;
+                    return (
+                      <tr
+                        key={id as string}
+                        className={clsx(
+                          'h-10',
+                          'bg-foreground',
+                          'border border-divider ',
+                          index === 0 && 'border-t-0',
+                          index === tableData.rows.length - 1 && 'border-b-0',
+                          'hover:bg-primary/[.12] cursor-pointer',
+                          'transition-[background-color] duration-150',
+                        )}
+                        onClick={() => router.push(`${ROUTE.TASK}/${id}`)}
+                      >
+                        {Object.values(rest).map((column, index) => (
+                          <td
+                            key={index}
+                            className={clsx('whitespace-nowrap', 'px-3 py-2')}
+                          >
+                            {column}
+                          </td>
+                        ))}
+                      </tr>
+                    );
+                  })}
             </tbody>
           </table>
         </div>

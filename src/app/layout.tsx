@@ -1,11 +1,6 @@
 import type { Metadata } from 'next';
 
-import { ThemeProvider } from 'next-themes';
-import {
-  AuthProvider,
-  GlobalProvider,
-  TaskManagementProvider,
-} from '@/providers';
+import { GlobalProvider } from '@/providers';
 import { ToastProvider } from '@/libraries/toast';
 import font from '@/assets/fonts';
 
@@ -29,13 +24,7 @@ export default function RootLayout({
     <html lang="en" suppressHydrationWarning>
       <body className={`${font.inter.className} antialiased`}>
         <GlobalProvider>
-          <AuthProvider>
-            <ThemeProvider>
-              <TaskManagementProvider>
-                <ToastProvider>{children}</ToastProvider>
-              </TaskManagementProvider>
-            </ThemeProvider>
-          </AuthProvider>
+          <ToastProvider>{children}</ToastProvider>
         </GlobalProvider>
       </body>
     </html>

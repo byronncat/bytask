@@ -12,12 +12,12 @@ export default function Layout({
   children: React.ReactNode;
 }>) {
   return (
-    <div
-      className={clsx('size-full max-w-7xl', 'mx-auto p-8', 'overflow-y-auto')}
-    >
-      <Header />
-      <Divider className="my-8" />
-      {children}
+    <div className="size-full overflow-y-auto">
+      <div className={clsx('w-full max-w-7xl', 'mx-auto p-8')}>
+        <Header />
+        <Divider className="my-8" />
+        {children}
+      </div>
     </div>
   );
 }

@@ -1,9 +1,9 @@
 import type { Document } from 'mongoose';
-import type { Task, User } from 'schema';
+import type { Task, User, TimeSession } from 'schema';
 
 import mongoose from 'mongoose';
 import { v4 as uuidv4 } from 'uuid';
-import { TASK_STATUS } from '@/constants/metadata';
+import { TASK_PRIORITY, TASK_STATUS } from '@/constants/metadata';
 
 interface UserDocument extends User, Document {
   id: User['id'];
@@ -58,6 +58,7 @@ const TaskSchema = new mongoose.Schema<TaskDocument>({
   uid: { type: String, required: true, ref: 'user' },
   description: { type: String },
   cover: { type: String },
+  priority: { type: Number, required: true, default: TASK_PRIORITY.LOW },
   status: { type: Number, required: true, default: TASK_STATUS.TODO },
   start_date: { type: Date },
   due_date: { type: Date },
@@ -77,8 +78,21 @@ const TaskSchema = new mongoose.Schema<TaskDocument>({
   // ],
 });
 
+interface TimeSessionDocument extends TimeSession, Document {
+  id: TimeSession['id'];
+  _doc?: TimeSession;
+}
+
+const TimeSessionSchema = new mongoose.Schema<TimeSessionDocument>({
+  uid: { type: String, required: true, ref: 'user' },
+  task_id: { type: String, required: true, ref: 'task' },
+  start_at: { type: Date, required: true },
+  end_at: { type: Date, required: true },
+});
+
 export {
   UserSchema,
   TaskSchema,
+  TimeSessionSchema,
   // WorkspaceSchema
 };

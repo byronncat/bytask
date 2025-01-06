@@ -29,4 +29,6 @@ export const colors = {
     'text-purple-700 bg-purple-300/[.6]',
     'dark:text-purple-400 dark:bg-purple-900/[.6]',
   ),
+  regBg: 'bg-red-500 dark:bg-red-400',
+  greenBg: 'bg-green-500 dark:bg-green-500',
 };

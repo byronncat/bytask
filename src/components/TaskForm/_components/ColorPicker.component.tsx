@@ -58,7 +58,11 @@ export default function ColorPicker({
           <button
             type="button"
             key={color}
-            className={clsx('w-10 h-8', 'rounded')}
+            className={clsx(
+              'w-10 h-8',
+              'rounded',
+              'hover:opacity-80 hover:shadow-md transition-all duration-150',
+            )}
             style={{ backgroundColor: color }}
             onClick={() => selectHandler(color)}
             aria-label={`Select color ${color}`}
@@ -89,7 +93,7 @@ export default function ColorPicker({
             'rounded',
             'bg-on-foreground/[.12]',
             'flex items-center justify-center',
-            'hover:bg-on-foreground/[.24] transition-[background-color] duration-200',
+            'hover:bg-on-foreground/[.24] transition-[background-color] duration-150',
           )}
           onClick={() => setShowCustom(true)}
           aria-label="Select new color"
@@ -136,7 +140,7 @@ function CustomModal({ onSelect, onExit }: Readonly<CustomModalProps>) {
     <div
       ref={ref}
       className={clsx(
-        'absolute top-0 right-0',
+        'absolute top-0 right-0 z-10',
         'px-3 py-4 mt-6',
         'bg-background rounded shadow-lg',
         'border border-divider',
@@ -150,7 +154,7 @@ function CustomModal({ onSelect, onExit }: Readonly<CustomModalProps>) {
           if (error) setError('');
           setCustomColor(e.target.value);
         }}
-        placeholder="Enter hex color"
+        placeholder="Hex color (e.g. #FFFFFF)"
         className={clsx(
           'w-full h-10',
           error ? 'border-red-500' : 'border-divider',
@@ -166,7 +170,7 @@ function CustomModal({ onSelect, onExit }: Readonly<CustomModalProps>) {
           'bg-primary text-background',
           'font-semibold',
           'flex items-center justify-center',
-          'hover:bg-on-foreground/[.24] transition-[background-color] duration-200',
+          'hover:bg-on-foreground/[.24] transition-[background-color] duration-150',
         )}
         onClick={() => {
           const hexColor = parseToHexColor(customColor);

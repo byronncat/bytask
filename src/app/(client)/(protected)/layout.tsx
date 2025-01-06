@@ -14,7 +14,7 @@ export default async function Layout({
   if (!session) redirect(ROUTE.LOGIN);
 
   return (
-    <div className="w-screen h-screen">
+    <div className="w-full h-screen">
       <Header className="py-2 px-4" />
       <div className={clsx('h-[calc(100vh-3rem-1px)]', 'flex')}>
         <Sidebar className={clsx('h-full', 'flex-shrink-0', 'relative z-10')} />

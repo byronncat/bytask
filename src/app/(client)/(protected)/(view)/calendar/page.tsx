@@ -1,8 +1,20 @@
 'use client';
 
-import type { EventContentArg } from '@fullcalendar/core';
+import type {
+  DatesSetArg,
+  EventContentArg,
+  EventDropArg,
+} from '@fullcalendar/core';
+import type {
+  EventResizeDoneArg,
+  EventReceiveArg,
+} from '@fullcalendar/interaction';
 import type { Task } from 'schema';
 
+import Link from 'next/link';
+import { TASK_PRIORITY, TASK_STATUS } from '@/constants/metadata';
+import { addDays } from 'date-fns';
+import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import FullCalendar from '@fullcalendar/react';
 import dayGridPlugin from '@fullcalendar/daygrid';
@@ -10,9 +22,20 @@ import interactionPlugin, { Draggable } from '@fullcalendar/interaction';
 import multiMonthPlugin from '@fullcalendar/multimonth';
 import listPlugin from '@fullcalendar/list';
 import timeGridPlugin from '@fullcalendar/timegrid';
+import {
+  faFlag,
+  faLocationDot,
+  faClock,
+  faCheck,
+  faTriangleExclamation,
+} from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import clsx from 'clsx';
+
+import { getContrastColor, isOverdue } from '@/utilities';
 import { useGlobal, useTask } from '@/providers';
 import { Card, QueryControls } from '../_components';
+import { ROUTE } from '@/constants/serverConfig';
 
 enum VIEW {
   DAY_GRID_MONTH = 'dayGridMonth',
@@ -23,8 +46,6 @@ enum VIEW {
   MULTI_MONTH = 'multiMonth',
 }
 
-/* */
-
 enum TITLE_FORMAT {
   NUMERIC = 'numeric',
   TWO_DIGIT = '2-digit',
@@ -33,112 +54,24 @@ enum TITLE_FORMAT {
   NARROW = 'narrow',
 }
 export default function TimelineViewPage() {
-  const { tasks } = useTask();
-  const [eventsWithDate, eventsWithoutDate] = parseEvents(tasks);
-  const { _refresh } = useGlobal();
-
-  // TimeGridWeekView
-  // const events = tasks
-  //   ?.filter((task) => {
-  //     if (!task.start_date || !task.due_date) {
-  //       return false; // Exclude tasks without either start or end dates
-  //     }
-  //     const start = new Date(task.start_date);
-  //     const end = new Date(task.due_date);
-
-  //     // Normalize start and end to midnight for day calculations
-  //     const startDay = startOfDay(start);
-  //     const endDay = startOfDay(end);
-
-  //     // Calculate the number of full calendar days between start and end
-  //     const fullDaysBetween = differenceInCalendarDays(endDay, startDay);
-
-  //     // If the event spans more than 1 day
-  //     if (fullDaysBetween > 1) {
-  //       // Check if the event includes at least one full calendar day
-  //       const startsAtMidnight =
-  //         isSameDay(start, startDay) &&
-  //         start.getHours() === 0 &&
-  //         start.getMinutes() === 0;
-  //       const endsAtMidnight =
-  //         isSameDay(end, endDay) &&
-  //         end.getHours() === 0 &&
-  //         end.getMinutes() === 0;
-
-  //       // If both conditions are true, it spans a full day, exclude it
-  //       if (startsAtMidnight && endsAtMidnight) {
-  //         return false;
-  //       }
-
-  //       // Check if it contains any full calendar day (between start and end)
-  //       for (let day = 1; day < fullDaysBetween; day++) {
-  //         const intermediateDay = addDays(startDay, day);
-
-  //         // If the intermediate day is strictly between start and end, exclude the task
-  //         if (
-  //           isAfter(intermediateDay, start) &&
-  //           isBefore(intermediateDay, end)
-  //         ) {
-  //           return false;
-  //         }
-  //       }
-  //     }
-
-  //     return true; // Include valid tasks
-  //   })
-  //   .map((task) => ({
-  //     id: task.id,
-  //     title: task.title,
-  //     start: task.start_date,
-  //     end: task.due_date,
-  //     allDay: false, // Explicitly ensure it's a timed event
-  //   }));
-
-  // ListWeekView
-  // const events = tasks
-  //   ?.map((task) => {
-  //     if (task.start_date && !task.due_date) {
-  //       // Only start date is provided
-  //       return {
-  //         id: task.id,
-  //         title: task.title,
-  //         start: task.start_date, // Ensure this is ISO 8601 or Date
-  //         allDay: true,
-  //       };
-  //     } else if (!task.start_date && task.due_date) {
-  //       // Only end date is provided
-  //       return {
-  //         id: task.id,
-  //         title: task.title,
-  //         start: task.due_date, // Treat end date as start date
-  //         allDay: true,
-  //       };
-  //     } else if (task.start_date && task.due_date) {
-  //       // Both start and end dates are provided
-  //       return {
-  //         id: task.id,
-  //         title: task.title,
-  //         start: task.start_date, // Ensure this is ISO 8601 or Date
-  //         end: task.due_date, // Ensure this is ISO 8601 or Date
-  //         allDay: true,
-  //       };
-  //     }
-  //     // Skip tasks without either start or end dates
-  //     return null;
-  //   })
-  //   .filter((event) => event !== null); // Filter out null values
-
-  // const events = tasks?.map((task) => ({
-  //   id: task.id,
-  //   title: task.title,
-  //   start: task.start_date,
-  //   end: task.due_date,
-  // }));
+  const { tasks, updateTask } = useTask();
 
   const router = useRouter();
+  const { _refresh } = useGlobal();
   useEffect(() => {
     router.refresh();
   }, [_refresh, router]);
+
+  const [currentView, setCurrentView] = useState<string>(VIEW.DAY_GRID_MONTH);
+  const [[eventsWithDate, eventsWithoutDate], setEvents] = useState<
+    [Event[], Event[]]
+  >([[], []]);
+  const handleDatesSet = (arg: DatesSetArg) => {
+    setCurrentView(arg.view.type);
+  };
+  useEffect(() => {
+    setEvents(parseEvents(tasks, currentView));
+  }, [tasks, currentView]);
 
   useEffect(() => {
     const containerEl = document.querySelector('#events');
@@ -151,53 +84,58 @@ export default function TimelineViewPage() {
             title: titleEl
               ? titleEl.textContent || 'Untitled event'
               : 'Untitled event',
+            id: eventEl.getAttribute('data-id') || '',
+            status: eventEl.getAttribute('data-status') || TASK_STATUS.TODO,
+            priority:
+              eventEl.getAttribute('data-priority') || TASK_PRIORITY.LOW,
+            backgroundColor: eventEl.getAttribute('data-color') || '',
           };
         },
       });
     }
   }, []);
 
-  function eventResizeHandler(info: any) {
-    // Handle the event resize
+  function eventResizeHandler(info: EventResizeDoneArg) {
     const { event } = info;
-
-    // Update the event in your backend or state here
-    // Example:
-    // updateEventInBackend({
-    //   id: event.id,
-    //   start: event.start,
-    //   end: event.end,
-    // });
-    console.log('resize', event);
+    const data = {
+      id: event.id,
+      title: event.title,
+      cover: event.backgroundColor,
+      priority: event.extendedProps.priority,
+      status: event.extendedProps.status,
+      start_date: event.start,
+      due_date: event.end,
+    } as Partial<Task>;
+    updateTask(data);
   }
 
-  function eventDropHandler(info: any) {
-    // Handle the event drop
+  function eventDropHandler(info: EventDropArg) {
     const { event } = info;
-
-    // Update the event in your backend or state here
-    // Example:
-    // updateEventInBackend({
-    //   id: event.id,
-    //   start: event.start,
-    //   end: event.end,
-    // });
-    console.log('drop', event);
+    const data = {
+      id: event.id,
+      title: event.title,
+      cover: event.backgroundColor,
+      priority: event.extendedProps.priority,
+      status: event.extendedProps.status,
+      start_date: event.start,
+      due_date: event.end,
+    } as Partial<Task>;
+    updateTask(data);
   }
 
-  const handleEventReceive = (info: any) => {
-    // Handle the dropped event
+  const handleEventReceive = (info: EventReceiveArg) => {
     const { event } = info;
-
-    // Save the dropped event to your backend or state here
-    // Example:
-    // saveEventToBackend({
-    //   id: event.id,
-    //   title: event.title,
-    //   start: event.start,
-    //   backgroundColor: event.backgroundColor,
-    // });
-    console.log('add', event);
+    if (!event.start) return;
+    const data = {
+      id: event.id,
+      title: event.title,
+      cover: event.backgroundColor,
+      priority: event.extendedProps.priority,
+      status: event.extendedProps.status,
+      start_date: event.start,
+      due_date: addDays(event.start, 1),
+    } as Partial<Task>;
+    updateTask(data);
   };
 
   const clickEventHandler = (info: any) => {
@@ -259,6 +197,7 @@ export default function TimelineViewPage() {
               listPlugin,
               timeGridPlugin,
             ]}
+            datesSet={handleDatesSet}
           />
         </div>
 
@@ -270,7 +209,14 @@ export default function TimelineViewPage() {
             id="events"
           >
             {eventsWithoutDate.map((event) => (
-              <li className={clsx('event', 'cursor-pointer')} key={event.id}>
+              <li
+                className={clsx('event', 'cursor-pointer')}
+                key={event.id}
+                data-id={event.id}
+                data-status={event.status}
+                data-color={event.cover}
+                data-priority={event.priority}
+              >
                 <Link href={`${ROUTE.TASK}/${event.id}`}>
                   <Card data={event} />
                 </Link>
@@ -283,22 +229,14 @@ export default function TimelineViewPage() {
   );
 }
 
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import {
-  faFlag,
-  faLocationDot,
-  faClock,
-} from '@fortawesome/free-solid-svg-icons';
-import { getContrastColor } from '@/utilities';
-import { useEffect } from 'react';
-import { ROUTE } from '@/constants/serverConfig';
-import Link from 'next/link';
-
 function renderEventContent(eventInfo: EventContentArg) {
-  const type = eventInfo.event.extendedProps.timeType;
-  const icon =
-    type === 'both' ? faClock : type === 'start' ? faFlag : faLocationDot;
-
+  let icon;
+  if (eventInfo.event.extendedProps.status === TASK_STATUS.DONE) icon = faCheck;
+  else if (isOverdue(eventInfo.event.extendedProps['due_date']))
+    icon = faTriangleExclamation;
+  else if (eventInfo.event.allDay) icon = faClock;
+  else if (eventInfo.event.extendedProps['start_date']) icon = faFlag;
+  else icon = faLocationDot;
   const hasBackgroundColor = !!eventInfo.event.backgroundColor;
   const style = hasBackgroundColor
     ? {
@@ -310,29 +248,19 @@ function renderEventContent(eventInfo: EventContentArg) {
   return (
     <div className={clsx('flex items-center', 'px-2')} style={style}>
       <FontAwesomeIcon icon={icon} className="size-3" />
-      {type !== 'both' && (
-        <span className="ml-1">
-          {eventInfo.timeText || eventInfo.event.startStr}
-        </span>
-      )}
       <span className="ml-1 font-semibold">{eventInfo.event.title}</span>
     </div>
   );
 }
 
-type TimeType = 'start' | 'end' | 'both';
-type Event = {
-  id: string;
-  title: string;
+type Event = Task & {
   start?: Task['start_date'];
   end?: Task['due_date'];
   allDay?: boolean;
-  timeType?: TimeType;
-} & Partial<EventContentArg> &
-  Task;
+} & Partial<EventContentArg>;
 
-function parseEvents(tasks?: Task[]) {
-  if (!tasks) return [[], []]; // Return empty arrays if tasks are undefined
+function parseEvents(tasks?: Task[], currentView?: string): [Event[], Event[]] {
+  if (!tasks) return [[], []];
 
   const eventsWithDate: Event[] = [];
   const eventsWithoutDate: Event[] = [];
@@ -342,21 +270,18 @@ function parseEvents(tasks?: Task[]) {
       eventsWithDate.push({
         ...task,
         start: task.start_date,
-        timeType: 'start' as TimeType,
       });
     } else if (!task.start_date && task.due_date) {
       eventsWithDate.push({
         ...task,
         start: task.due_date,
-        timeType: 'end' as TimeType,
       });
     } else if (task.start_date && task.due_date) {
       eventsWithDate.push({
         ...task,
         start: task.start_date,
         end: task.due_date,
-        allDay: true,
-        timeType: 'both' as TimeType,
+        allDay: currentView === VIEW.DAY_GRID_MONTH,
         backgroundColor: task.cover,
         borderColor: task.cover,
       });

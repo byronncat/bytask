@@ -57,7 +57,7 @@ export default function ThemeSelection({
         className={clsx(
           'size-8 rounded-full',
           'relative z-10',
-          'transistion-colors duration-300',
+          'transistion-colors duration-150',
           'flex items-center justify-center',
           open ? 'bg-on-background/[.12]' : 'hover:bg-on-background/[.12]',
         )}
@@ -80,7 +80,7 @@ export default function ThemeSelection({
       {open && (
         <>
           <span
-            className={clsx('w-screen h-screen', 'absolute top-0 right-0 z-10')}
+            className={clsx('w-full h-screen', 'absolute top-0 right-0 z-10')}
             onClick={toggleDropdown}
           />
 

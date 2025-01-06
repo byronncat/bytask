@@ -25,17 +25,6 @@ export default function QueryControls({
 }: QueryControlsProps) {
   const { setQuery } = useTask();
 
-  const fetchDebounced = useDebouncedCallback(async function fetchQuery() {
-    const filterValueStr = checkboxValue.join(',');
-    setQuery({
-      sortBy: sortValue[0],
-      sortOrder: sortValue[1],
-      filterBy: checkboxValue.length > 0 ? FILTER_BY.STATUS : undefined,
-      filterValue: filterValueStr,
-      search: searchValue,
-    });
-  }, 300);
-
   const [sortValue, setSortValue] = useState<[SORT_BY, SORT_ORDER]>([
     SORT_BY.RECENTLY_UPDATED,
     SORT_ORDER.DESC,
@@ -45,13 +34,18 @@ export default function QueryControls({
     setSortValue([sortBy as SORT_BY, sortOrder as SORT_ORDER]);
   }, []);
 
-  const [isFilterOpen, setIsFilterOpen] = useState(false);
-  const [checkboxValue, setCheckboxValue] = useState<Option['value'][]>([]);
   const checkboxRef = useRef<HTMLInputElement>(null);
   useOutsideAlerter(checkboxRef, () => setIsFilterOpen(false));
 
+  const [isFilterOpen, setIsFilterOpen] = useState(false);
+  const [checkboxValue, setCheckboxValue] = useState<Option['value'][]>([]);
+  const [checkboxDisplay, setCheckboxDisplay] = useState<Option['value'][]>([]);
+  const debouncedCheckboxValue = useDebouncedCallback((value) => {
+    setCheckboxValue(value);
+  }, 1200);
+
   function checkboxHandler(value: Option['value']) {
-    setCheckboxValue((prev) => {
+    setCheckboxDisplay((prev) => {
       if (prev.includes(value)) {
         return prev.filter((item) => item !== value);
       }
@@ -59,8 +53,13 @@ export default function QueryControls({
     });
   }
   function resetFilterHandler() {
-    setCheckboxValue([]);
+    setCheckboxDisplay([]);
   }
+
+  useEffect(() => {
+    // FIXME: Trigger API call two times at the first render
+    debouncedCheckboxValue(checkboxDisplay);
+  }, [checkboxDisplay, debouncedCheckboxValue]);
 
   const [searchValue, setSearchValue] = useState<string>('');
   const searchElementRef = useRef<HTMLInputElement>(null);
@@ -72,7 +71,7 @@ export default function QueryControls({
   }, []);
   const debouncedSearchHandler = useDebouncedCallback((searchValueRef) => {
     searchHandler(searchValueRef);
-  }, 400);
+  }, 1200);
 
   useEffect(() => {
     const searchHandler = async () => {
@@ -87,138 +86,154 @@ export default function QueryControls({
     };
   }, [searchHandler, debouncedSearchHandler]);
 
+  const fetchQuery = useCallback(async () => {
+    const filterValueStr = checkboxValue.join(',');
+    setQuery({
+      sortBy: sortValue[0] || SORT_BY.RECENTLY_UPDATED,
+      sortOrder: sortValue[1] || SORT_ORDER.DESC,
+      filterBy: checkboxValue.length > 0 ? FILTER_BY.STATUS : undefined,
+      filterValue: filterValueStr,
+      search: searchValue,
+    });
+  }, [sortValue, checkboxValue, searchValue, setQuery]);
+
+  const [queryLoaded, setQueryLoaded] = useState(false);
   useEffect(() => {
-    fetchDebounced();
-  }, [sortValue, checkboxValue, searchValue, fetchDebounced]);
+    if (queryLoaded) fetchQuery();
+    else setQueryLoaded(true);
+  }, [sortValue, checkboxValue, searchValue, fetchQuery, queryLoaded]);
 
   return (
-    <section>
-      <div className={clsx('pb-2', 'flex justify-between items-center')}>
-        <div className="flex gap-x-1">
-          <Selection
-            label={<Label name="Sort by" />}
-            options={sortOptions}
-            onClick={() => {}}
-            onSelect={selectHandler}
-            className={clsx('w-48', sort ? 'block' : 'hidden')}
-            inputClassName="bg-foreground text-on-foreground"
-          />
-
-          <div
-            className={clsx(
-              'w-48 h-10',
-              'relative z-20',
-              filter ? 'block' : 'hidden',
+    <section className="block">
+      <div className={clsx('h-auto', 'flex justify-between lg:items-center')}>
+        {(sort || filter) && (
+          <div className={clsx('flex gap-x-1 gap-y-3', 'flex-col lg:flex-row')}>
+            {sort && (
+              <Selection
+                label={<Label name="Sort by" />}
+                options={sortOptions}
+                onSelect={selectHandler}
+                className="w-48"
+                inputClassName="bg-foreground text-on-foreground"
+              />
             )}
-            ref={checkboxRef}
-          >
-            <Label name="Filter by" />
-            <div>
-              <div
-                className={clsx(
-                  'gap-2',
-                  'rounded h-10 px-3',
-                  'border border-divider',
-                  'bg-foreground text-on-foreground',
-                  'cursor-pointer transition',
-                  'flex justify-between items-center ',
-                )}
-                onClick={() => setIsFilterOpen((prev) => !prev)}
-              >
-                <span
-                  className={clsx(
-                    'text-sm font-medium whitespace-nowrap',
-                    'w-36 overflow-x-scroll no-scrollbar',
-                  )}
-                >
-                  {checkboxValue.length > 0
-                    ? checkboxValue.map((value, index) => {
-                        const option = filterOptions.find(
-                          (option) => option.value === value,
-                        );
-                        return (
-                          <Fragment key={option?.id}>
-                            <StatusTag status={option?.value as TASK_STATUS} />
-                            {index < checkboxValue.length - 1 && ' '}
-                          </Fragment>
-                        );
-                      })
-                    : 'Filter by'}
-                </span>
-                <span className="text-xs">▼</span>
+
+            {filter && (
+              <div className="w-48" ref={checkboxRef}>
+                <Label name="Filter by" />
+                <div className="relative">
+                  <div
+                    className={clsx(
+                      'gap-2',
+                      'rounded h-10 px-3',
+                      'border border-divider',
+                      'bg-foreground text-on-foreground',
+                      'cursor-pointer transition',
+                      'flex justify-between items-center',
+                    )}
+                    onClick={() => setIsFilterOpen((prev) => !prev)}
+                  >
+                    <span
+                      className={clsx(
+                        'text-sm font-medium whitespace-nowrap',
+                        'w-36 overflow-x-scroll no-scrollbar',
+                      )}
+                    >
+                      {checkboxDisplay.length > 0
+                        ? checkboxDisplay.map((value, index) => {
+                            const option = filterOptions.find(
+                              (option) => option.value === value,
+                            );
+                            return (
+                              <Fragment key={option?.id}>
+                                <StatusTag
+                                  status={option?.value as TASK_STATUS}
+                                />
+                                {index < checkboxDisplay.length - 1 && ' '}
+                              </Fragment>
+                            );
+                          })
+                        : 'Filter by'}
+                    </span>
+                    <span className="text-xs">▼</span>
+                  </div>
+
+                  <div
+                    className={clsx(
+                      'mt-1',
+                      'absolute z-10 w-full',
+                      'bg-foreground',
+                      'rounded border border-divider',
+                      isFilterOpen ? 'block' : 'hidden',
+                    )}
+                  >
+                    <ul className="px-3 pt-2">
+                      {filterOptions.map((option) => (
+                        <li key={option.id}>
+                          <label
+                            htmlFor={`Filter-${option.id}`}
+                            className={clsx(
+                              'h-8',
+                              'gap-2',
+                              'inline-flex items-center',
+                            )}
+                          >
+                            <input
+                              type="checkbox"
+                              id={`Filter-${option.id}`}
+                              className={clsx(
+                                'size-4',
+                                'rounded border border-divider',
+                              )}
+                              value={option.value}
+                              onChange={() => checkboxHandler(option.value)}
+                              checked={checkboxDisplay.includes(option.value)}
+                            />
+
+                            <span className="text-sm font-medium text-on-foreground">
+                              {option.name}
+                            </span>
+                          </label>
+                        </li>
+                      ))}
+                    </ul>
+
+                    <button
+                      type="button"
+                      className={clsx(
+                        'text-sm',
+                        'text-right w-full pr-3',
+                        'hover:underline pb-2',
+                      )}
+                      onClick={resetFilterHandler}
+                    >
+                      Reset
+                    </button>
+                  </div>
+                </div>
               </div>
-
-              <div
-                className={clsx(
-                  'mt-1',
-                  'bg-foreground',
-                  'rounded border border-divider',
-                  isFilterOpen ? 'block' : 'hidden',
-                )}
-              >
-                <ul className="px-3 pt-2">
-                  {filterOptions.map((option) => (
-                    <li key={option.id}>
-                      <label
-                        htmlFor={`Filter-${option.id}`}
-                        className={clsx(
-                          'h-8',
-                          'gap-2',
-                          'inline-flex items-center',
-                        )}
-                      >
-                        <input
-                          type="checkbox"
-                          id={`Filter-${option.id}`}
-                          className={clsx(
-                            'size-4',
-                            'rounded border border-divider',
-                          )}
-                          value={option.value}
-                          onChange={() => checkboxHandler(option.value)}
-                          checked={checkboxValue.includes(option.value)}
-                        />
-
-                        <span className="text-sm font-medium text-on-foreground">
-                          {option.name}
-                        </span>
-                      </label>
-                    </li>
-                  ))}
-                </ul>
-
-                <button
-                  type="button"
-                  className={clsx(
-                    'text-sm',
-                    'text-right w-full pr-3',
-                    'hover:underline pb-2',
-                  )}
-                  onClick={resetFilterHandler}
-                >
-                  Reset
-                </button>
-              </div>
-            </div>
+            )}
           </div>
-        </div>
+        )}
 
-        <div className={search ? 'block' : 'hidden'}>
-          <Label id="search" name="Search" />
-          <input
-            id="search"
-            className={clsx(
-              'text-sm',
-              'block rounded w-60 h-10 px-3',
-              'border border-divider',
-              'bg-foreground text-on-foreground',
-              'focus:outline-none',
-            )}
-            type="text"
-            placeholder="Search"
-            ref={searchElementRef}
-          />
-        </div>
+        {search && (
+          <div className="flex flex-col">
+            <Label id="search" name="Search" />
+            <input
+              id="search"
+              className={clsx(
+                'text-sm',
+                'block rounded w-60 h-10 px-3',
+                'border border-divider',
+                'bg-foreground text-on-foreground',
+                'focus:outline-none',
+              )}
+              type="text"
+              placeholder="Search"
+              ref={searchElementRef}
+            />
+          </div>
+        )}
       </div>
     </section>
   );
@@ -258,6 +273,21 @@ const sortOptions = [
     value: `${SORT_BY.RECENTLY_UPDATED},${SORT_ORDER.ASC}`,
   },
   {
+    id: 10,
+    option: 'Highest priority',
+    value: `${SORT_BY.PRIORITY},${SORT_ORDER.DESC}`,
+  },
+  {
+    id: 11,
+    option: 'Lowest priority',
+    value: `${SORT_BY.PRIORITY},${SORT_ORDER.ASC}`,
+  },
+  {
+    id: 5,
+    option: 'Status',
+    value: `${SORT_BY.STATUS},${SORT_ORDER.ASC}`,
+  },
+  {
     id: 3,
     option: 'Alphabetically A-Z',
     value: `${SORT_BY.TITLE},${SORT_ORDER.ASC}`,
@@ -266,11 +296,6 @@ const sortOptions = [
     id: 4,
     option: 'Alphabetically Z-A',
     value: `${SORT_BY.TITLE},${SORT_ORDER.DESC}`,
-  },
-  {
-    id: 5,
-    option: 'Status',
-    value: `${SORT_BY.STATUS},${SORT_ORDER.ASC}`,
   },
   {
     id: 8,

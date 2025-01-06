@@ -33,7 +33,7 @@ export default function ForgotPasswordPage() {
           'w-full',
           'mt-4 text-right block',
           'font-semibold text-sm text-primary',
-          'hover:opacity-60 transition-opacity duration-200',
+          'hover:opacity-60 transition-opacity duration-150',
         )}
       >
         Back to login

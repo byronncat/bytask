@@ -7,10 +7,10 @@ import clsx from 'clsx';
 import { formClassName } from './className';
 import { format, parseISO } from 'date-fns';
 
-function formatDateToLocal(isoDate?: string) {
+function formatDateToLocal(isoDate?: string | Date) {
   if (!isoDate) return '';
-  const date = parseISO(isoDate);
-  return format(date, 'yyyy-MM-dd HH:mm:ss');
+  const date = isoDate instanceof Date ? isoDate : parseISO(isoDate);
+  return format(date, "yyyy-MM-dd'T'HH:mm");
 }
 
 interface DatepickerProps {
@@ -30,9 +30,7 @@ export default function Datepicker({
   inputClassName,
   defaultValue,
 }: Readonly<DatepickerProps>) {
-  const [selectedDate, setSelectedDate] = useState(
-    formatDateToLocal(defaultValue),
-  );
+  const [selectedDate, setSelectedDate] = useState(defaultValue);
 
   const handleDateChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const newDate = e.target.value;
@@ -40,7 +38,7 @@ export default function Datepicker({
   };
 
   useEffect(() => {
-    if (defaultValue) setSelectedDate(formatDateToLocal(defaultValue));
+    if (defaultValue) setSelectedDate(defaultValue);
   }, [defaultValue]);
 
   return (
@@ -50,7 +48,7 @@ export default function Datepicker({
         id={id}
         type="datetime-local"
         {...register(id)}
-        value={selectedDate}
+        value={formatDateToLocal(selectedDate)}
         onChange={handleDateChange}
         className={clsx(
           'w-full h-10',

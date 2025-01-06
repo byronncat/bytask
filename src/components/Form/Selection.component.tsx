@@ -7,11 +7,12 @@ import { useOutsideAlerter } from '@/hooks';
 interface SelectionProps {
   label?: React.ReactNode;
   options: Option[];
-  onClick: () => void;
+  onClick?: () => void;
   onSelect: (value: Option['value']) => void;
   className?: string;
   inputClassName?: string;
   defaultValue?: Option['value'];
+  placeholder?: string;
 }
 
 export default function Selection({
@@ -22,6 +23,7 @@ export default function Selection({
   className,
   inputClassName,
   defaultValue,
+  placeholder,
 }: Readonly<SelectionProps>) {
   const [showOptions, setShowOptions] = useState(false);
   const [selectedOption, setSelectedOption] = useState<Option | null>(
@@ -33,14 +35,13 @@ export default function Selection({
 
   function clickHandler() {
     setShowOptions(!showOptions);
-    onClick();
+    if (onClick) onClick();
   }
 
   function selectHandler(id: Option['id'], value: Option['value']) {
     const selected = options.find((option) => option.id === id) || null;
     setSelectedOption(selected);
     setShowOptions(false);
-    onSelect(value);
   }
 
   useEffect(() => {
@@ -56,14 +57,14 @@ export default function Selection({
         'rounded',
         'w-full h-10 px-3',
         'flex items-center justify-between',
-        'text-sm capitalize',
+        'text-sm',
         'border border-divider',
         'cursor-pointer',
         inputClassName,
       )}
       onClick={clickHandler}
     >
-      {selectedOption?.option || 'Select'}
+      {selectedOption?.option || placeholder || 'Select'}
       <span className="text-xs">▼</span>
     </div>
   );
@@ -72,6 +73,7 @@ export default function Selection({
     <div
       className={clsx(
         'absolute top-full mt-1',
+        'max-h-80 overflow-y-auto',
         'w-full z-10 py-2',
         'border border-divider',
         'rounded shadow',
@@ -84,11 +86,11 @@ export default function Selection({
           key={option.id}
           className={clsx(
             'px-3 py-2',
-            'text-sm capitalize',
+            'text-sm',
             'cursor-pointer',
             option.id === selectedOption?.id
               ? 'bg-primary/[.12] border-l-2 border-primary text-primary font-semibold'
-              : 'hover:bg-white/[.05] transition-[background-color] duration-200',
+              : 'hover:bg-white/[.05] transition-[background-color] duration-150',
           )}
           onClick={() => {
             selectHandler(option.id, option.value);
