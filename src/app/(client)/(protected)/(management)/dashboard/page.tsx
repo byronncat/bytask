@@ -217,6 +217,7 @@ export default function DashboardPage() {
           'bg-foreground',
           'p-6 rounded-lg shadow-lg',
           'col-span-2 lg:col-span-1',
+          'text-on-foreground',
         )}
       >
         <h2 className={clsx('font-semibold text-lg', 'mb-8')}>
