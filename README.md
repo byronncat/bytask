@@ -104,7 +104,7 @@ To set up the project locally, follow these steps.
 - **Schedule Tasks**: Organize your study plan in a calendar view.
 - **Use AI Insights**: Optimize your study sessions with AI-powered feedback.
 - **Focus Timer**: Track sessions with the built-in Pomodoro timer.
-- **Analyze Progress**: View study analytics and track efficiency.
+- **Analyze Progress**: View study analytics.
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
@@ -120,9 +120,9 @@ Distributed under the MIT License. See `LICENSE` for more information.
 
 ## Contact
 
-Your Name - your.email@example.com
+Ngo Cao Anh Thinh - anhthinhncat@gmail.com
 
-Project Link: [GitHub Repo](https://github.com/your_username/ai-study-planner)
+Project Link: [GitHub Repo](https://github.com/byronncat/bytask)
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
