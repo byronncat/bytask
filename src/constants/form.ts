@@ -15,7 +15,7 @@ export const LOGIN_FORM = {
           message: 'Email is invalid',
         },
       },
-      defaultValue: 'ncathinh21@clc.fitus.edu.vn',
+      defaultValue: '',
     },
     {
       id: 'password',
@@ -25,7 +25,7 @@ export const LOGIN_FORM = {
       validation: {
         required: 'Password is required',
       },
-      defaultValue: '1234567',
+      defaultValue: '',
     },
   ],
 } as const satisfies IForm;
@@ -37,7 +37,7 @@ export const SIGNUP_FORM = {
       label: 'Email',
       placeholder: '',
       type: 'email',
-      defaultValue: 'ncathinh21@clc.fitus.edu.vn',
+      defaultValue: '',
       validation: {
         required: 'Email is required',
         pattern: {
@@ -51,7 +51,7 @@ export const SIGNUP_FORM = {
       label: 'Username',
       placeholder: '',
       type: 'text',
-      defaultValue: 'Byron',
+      defaultValue: '',
       validation: {
         required: 'Username is required',
         minLength: {
@@ -65,7 +65,7 @@ export const SIGNUP_FORM = {
       label: 'Password',
       placeholder: '',
       type: 'password',
-      defaultValue: '1234567',
+      defaultValue: '',
       validation: {
         required: 'Password is required',
         minLength: {
