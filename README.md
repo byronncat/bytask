@@ -7,12 +7,12 @@
     <img src="public/icon.png" alt="Logo" width="80" height="80">
   </a>
 
-  <h3 align="center">AI-powered Study Planner</h3>
+  <h3 align="center">AI-powered Planner</h3>
 
   <p align="center">
-    Optimize your learning with scheduling!
+    Optimize your schedules!
     <br />
-    <a href="https://youtu.be/Jqcf1iWhTMU"><strong>View Demo »</strong></a>
+    <a href="https://youtu.be/Jqcf1iWhTMU" target="_blank"><strong>View Demo »</strong></a>
   </p>
 </div>
 
@@ -45,15 +45,15 @@
 
 ![Product Screenshot](readme-resources/product-screenshot.png)
 
-The **AI-powered Study Planner** is a web application designed to help students and lifelong learners manage their study schedules effectively. Leveraging AI, it provides personalized feedback and insights to optimize learning efficiency and time management.
+The **AI-powered Planner** is a web application designed to help managing schedules effectively. Integrated with AI, it provides feedback and statistics to optimize scheduling and time management.
 
 ### Key Features:
-- **Authentication & Profile Management**: Secure login and session management using session cookies.
-- **Task Management**: Add, update, delete, and prioritize tasks.
-- **Task Scheduling**: Drag-and-drop tasks into a calendar view.
-- **AI Suggestions**: Receive AI-driven insights to optimize study schedules and prevent burnout.
+- **Authentication & Profile Management**: Secure login (support Google Login) and user session.
+- **Task Management**: Create, update, prioritize, and track study tasks.
+- **Smart Scheduling**: Plan sessions via an intuitive interface.
+- **AI Suggestions**: Get personalized insights to optimize study patterns.
 - **Focus Timer**: Track study sessions using the Pomodoro technique.
-- **Analytics**: Visualize study habits and receive performance insights.
+- **Analytics Dashboard**: Visualize habits, time usage, and performance trends.
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
@@ -100,11 +100,11 @@ To set up the project locally, follow these steps.
 
 ## Usage
 
-- **Add & Manage Tasks**: Create study tasks with priority levels.
-- **Schedule Tasks**: Organize your study plan in a calendar view.
-- **Use AI Insights**: Optimize your study sessions with AI-powered feedback.
-- **Focus Timer**: Track sessions with the built-in Pomodoro timer.
-- **Analyze Progress**: View study analytics.
+- **Add & Manage Tasks**: Create study goals and prioritize them.
+- **Schedule Tasks**: Organize tasks using an interactive scheduler.
+- **Use AI Insights**: Receive suggestions to enhance time management.
+- **Focus Timer**: Track sessions with the built-in timer.
+- **Track Progress**: View analytics and performance reports.
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
@@ -120,9 +120,9 @@ Distributed under the MIT License. See `LICENSE` for more information.
 
 ## Contact
 
-Ngo Cao Anh Thinh - anhthinhncat@gmail.com
+Ngo Cao Anh Thinh | anhthinhncat@gmail.com | +84 933 276 382
 
-Project Link: [GitHub Repo](https://github.com/byronncat/bytask)
+Project Link: [Bygram](https://bytask.vercel.app/)
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
