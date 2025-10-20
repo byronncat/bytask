@@ -12,7 +12,7 @@
   <p align="center">
     Optimize your schedules!
     <br />
-    <a href="https://youtu.be/Jqcf1iWhTMU" target="_blank"><strong>View Demo »</strong></a>
+    <a href="https://youtu.be/Jqcf1iWhTMU" target="_blank" rel="noopener noreferrer"><strong>View Demo »</strong></a>
   </p>
 </div>
 
@@ -45,10 +45,11 @@
 
 ![Product Screenshot](readme-resources/product-screenshot.png)
 
-The **AI-powered Planner** is a web application designed to help managing schedules effectively. Integrated with AI, it provides feedback and statistics to optimize scheduling and time management.
+The **AI-powered Planner** is a web application designed to help managing schedules effectively. Integrated with AI, it provides feedback and analytics to optimize scheduling and time management.
 
 ### Key Features:
-- **Authentication & Profile Management**: Secure login (support Google Login) and user session.
+
+- **Authentication & Profile Management**: Secure login, user session and support Google OAuth.
 - **Task Management**: Create, update, prioritize, and track study tasks.
 - **Smart Scheduling**: Plan sessions via an intuitive interface.
 - **AI Suggestions**: Get personalized insights to optimize study patterns.
@@ -134,4 +135,3 @@ Project Link: [Bygram](https://bytask.vercel.app/)
 [MongoDB-url]: https://www.mongodb.com/
 [TailwindCSS.js]: https://img.shields.io/badge/Tailwind_CSS-38B2AC?style=for-the-badge&logo=tailwind-css&logoColor=white
 [TailwindCSS-url]: https://tailwindcss.com/
-
